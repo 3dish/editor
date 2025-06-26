@@ -1,4 +1,4 @@
-import { Container, Element } from '@playcanvas/pcui';
+import { Container, Element } from 'pcui';
 
 class Spinner extends Container {
     constructor(args = {}) {

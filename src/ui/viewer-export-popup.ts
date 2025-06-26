@@ -1,10 +1,10 @@
-import { BooleanInput, Button, ColorPicker, Container, Element, Label, SelectInput, SliderInput, TextAreaInput, TextInput } from 'pcui';
+import { Button, ColorPicker, Container, Element, Label, SelectInput, SliderInput, TextInput } from 'pcui';
+import { path } from 'playcanvas';
 
 import { Pose } from '../camera-poses';
-import { Events } from '../events';
 import { localize } from './localization';
-import { PublishSettings } from '../publish';
-import { AnimTrack, ExperienceSettings } from '../splat-serialize';
+import { Events } from '../events';
+import { AnimTrack, ExperienceSettings, ViewerExportSettings } from '../splat-serialize';
 import sceneExport from './svg/export.svg';
 
 const createSvg = (svgString: string, args = {}) => {
@@ -15,18 +15,17 @@ const createSvg = (svgString: string, args = {}) => {
     });
 };
 
-class PublishSettingsDialog extends Container {
-    show: () => Promise<PublishSettings | null>;
+class ViewerExportPopup extends Container {
+    show: (filename?: string) => void;
     hide: () => void;
     destroy: () => void;
 
     constructor(events: Events, args = {}) {
         args = {
-            ...args,
-            id: 'publish-settings-dialog',
-            class: 'settings-dialog',
+            id: 'export-popup',
             hidden: true,
-            tabIndex: -1
+            tabIndex: -1,
+            ...args
         };
 
         super(args);
@@ -37,39 +36,81 @@ class PublishSettingsDialog extends Container {
 
         // header
 
-        const headerIcon = createSvg(sceneExport, { id: 'icon' });
-        const headerText = new Label({ id: 'text', text: localize('publish.header') });
-        const header = new Container({ id: 'header' });
-        header.append(headerIcon);
+        const header = new Container({
+            id: 'header'
+        });
+
+        const headerText = new Label({
+            id: 'header',
+            text: localize('export.header')
+        });
+
+        header.append(createSvg(sceneExport, {
+            id: 'icon'
+        }));
+
         header.append(headerText);
 
-        // title
+        // content
 
-        const titleLabel = new Label({ class: 'label', text: localize('publish.title') });
-        const titleInput = new TextInput({ class: 'text-input' });
-        const titleRow = new Container({ class: 'row' });
-        titleRow.append(titleLabel);
-        titleRow.append(titleInput);
+        const content = new Container({ id: 'content' });
 
-        // description
+        // type
 
-        const descLabel = new Label({ class: 'label', text: localize('publish.description') });
-        const descInput = new TextAreaInput({ class: 'text-area' });
-        const descRow = new Container({ class: 'row' });
-        descRow.append(descLabel);
-        descRow.append(descInput);
+        const typeRow = new Container({
+            class: 'row'
+        });
 
-        // listed
+        const typeLabel = new Label({
+            class: 'label',
+            text: localize('export.type')
+        });
 
-        const listLabel = new Label({ class: 'label', text: localize('publish.listed') });
-        const listBoolean = new BooleanInput({ class: 'boolean', value: true });
-        const listRow = new Container({ class: 'row' });
-        listRow.append(listLabel);
-        listRow.append(listBoolean);
+        const typeSelect = new SelectInput({
+            class: 'select',
+            defaultValue: 'html',
+            options: [
+                { v: 'html', t: localize('export.html') },
+                { v: 'zip', t: localize('export.package') }
+            ]
+        });
 
-        // start position
+        typeRow.append(typeLabel);
+        typeRow.append(typeSelect);
 
-        const startLabel = new Label({ class: 'label', text: localize('export.start-position') });
+        // spherical harmonic bands
+
+        const bandsRow = new Container({
+            class: 'row'
+        });
+
+        const bandsLabel = new Label({
+            class: 'label',
+            text: localize('export.sh-bands')
+        });
+
+        const bandsSlider = new SliderInput({
+            class: 'slider',
+            min: 0,
+            max: 3,
+            precision: 0,
+            value: 3
+        });
+
+        bandsRow.append(bandsLabel);
+        bandsRow.append(bandsSlider);
+
+        // camera start position
+
+        const startRow = new Container({
+            class: 'row'
+        });
+
+        const startLabel = new Label({
+            class: 'label',
+            text: localize('export.start-position')
+        });
+
         const startSelect = new SelectInput({
             class: 'select',
             defaultValue: 'viewport',
@@ -79,7 +120,7 @@ class PublishSettingsDialog extends Container {
                 { v: 'pose', t: localize('export.pose-camera') }
             ]
         });
-        const startRow = new Container({ class: 'row' });
+
         startRow.append(startLabel);
         startRow.append(startSelect);
 
@@ -100,18 +141,34 @@ class PublishSettingsDialog extends Container {
 
         // clear color
 
-        const colorLabel = new Label({ class: 'label', text: localize('export.background-color') });
+        const colorRow = new Container({
+            class: 'row'
+        });
+
+        const colorLabel = new Label({
+            class: 'label',
+            text: localize('export.background-color')
+        });
+
         const colorPicker = new ColorPicker({
             class: 'color-picker',
             value: [1, 1, 1, 1]
         });
-        const colorRow = new Container({ class: 'row' });
+
         colorRow.append(colorLabel);
         colorRow.append(colorPicker);
 
         // fov
 
-        const fovLabel = new Label({ class: 'label', text: localize('export.fov') });
+        const fovRow = new Container({
+            class: 'row'
+        });
+
+        const fovLabel = new Label({
+            class: 'label',
+            text: localize('export.fov')
+        });
+
         const fovSlider = new SliderInput({
             class: 'slider',
             min: 10,
@@ -119,35 +176,37 @@ class PublishSettingsDialog extends Container {
             precision: 0,
             value: 60
         });
-        const fovRow = new Container({ class: 'row' });
+
         fovRow.append(fovLabel);
         fovRow.append(fovSlider);
 
-        // bands
+        // filename
 
-        const bandsLabel = new Label({ class: 'label', text: localize('export.sh-bands') });
-        const bandsSlider = new SliderInput({
-            class: 'slider',
-            min: 0,
-            max: 3,
-            precision: 0,
-            value: 3
+        const filenameRow = new Container({
+            class: 'row'
         });
-        const bandsRow = new Container({ class: 'row' });
-        bandsRow.append(bandsLabel);
-        bandsRow.append(bandsSlider);
+
+        const filenameLabel = new Label({
+            class: 'label',
+            text: localize('export.filename')
+        });
+
+        const filenameEntry = new TextInput({
+            class: 'text-input'
+        });
+
+        filenameRow.append(filenameLabel);
+        filenameRow.append(filenameEntry);
 
         // content
 
-        const content = new Container({ id: 'content' });
-        content.append(titleRow);
-        content.append(descRow);
-        content.append(listRow);
+        content.append(typeRow);
+        content.append(bandsRow);
         content.append(startRow);
         content.append(animationRow);
         content.append(colorRow);
         content.append(fovRow);
-        content.append(bandsRow);
+        content.append(filenameRow);
 
         // footer
 
@@ -155,16 +214,16 @@ class PublishSettingsDialog extends Container {
 
         const cancelButton = new Button({
             class: 'button',
-            text: localize('publish.cancel')
+            text: localize('popup.cancel')
         });
 
-        const okButton = new Button({
+        const exportButton = new Button({
             class: 'button',
-            text: localize('publish.ok')
+            text: localize('file.export')
         });
 
         footer.append(cancelButton);
-        footer.append(okButton);
+        footer.append(exportButton);
 
         dialog.append(header);
         dialog.append(content);
@@ -172,13 +231,11 @@ class PublishSettingsDialog extends Container {
 
         this.append(dialog);
 
-        // handle key bindings for enter and escape
-
         let onCancel: () => void;
-        let onOK: () => void;
+        let onExport: () => void;
 
         cancelButton.on('click', () => onCancel());
-        okButton.on('click', () => onOK());
+        exportButton.on('click', () => onExport());
 
         const keydown = (e: KeyboardEvent) => {
             switch (e.key) {
@@ -186,7 +243,7 @@ class PublishSettingsDialog extends Container {
                     onCancel();
                     break;
                 case 'Enter':
-                    if (!e.shiftKey) onOK();
+                    if (!e.shiftKey) onExport();
                     break;
                 default:
                     e.stopPropagation();
@@ -194,29 +251,30 @@ class PublishSettingsDialog extends Container {
             }
         };
 
-        // reset UI and configure for current state
-        const reset = (hasPoses: boolean) => {
-            const splats = events.invoke('scene.splats');
-            const filename = splats[0].filename;
-            const dot = splats[0].filename.lastIndexOf('.');
+        const updateExtension = () => {
+            if (!filenameRow.hidden) {
+                const removeExtension = (filename: string) => {
+                    return filename.substring(0, filename.length - path.getExtension(filename).length);
+                };
+                filenameEntry.value = removeExtension(filenameEntry.value) + (typeSelect.value === 'html' ? '.html' : '.zip');
+            }
+        };
 
+        typeSelect.on('change', updateExtension);
+
+        const reset = (hasPoses: boolean) => {
             const bgClr = events.invoke('bgClr');
 
-            titleInput.value = filename.slice(0, dot > 0 ? dot : undefined);
-            descInput.value = '';
-            listBoolean.value = true;
+            bandsSlider.value = events.invoke('view.bands');
             startSelect.value = hasPoses ? 'pose' : 'viewport';
-            startSelect.disabledOptions = hasPoses ? { } : { pose: startSelect.options[2].t };
+            startSelect.disabledOptions = hasPoses ? {} : { 'pose': startSelect.options[2].t };
             animationSelect.value = hasPoses ? 'track' : 'none';
             animationSelect.disabledOptions = hasPoses ? { } : { track: animationSelect.options[1].t };
             colorPicker.value = [bgClr.r, bgClr.g, bgClr.b];
             fovSlider.value = events.invoke('camera.fov');
-            bandsSlider.value = events.invoke('view.bands');
         };
 
-        // function implementations
-
-        this.show = () => {
+        this.show = (filename?: string) => {
             const frames = events.invoke('timeline.frames');
             const frameRate = events.invoke('timeline.frameRate');
 
@@ -226,20 +284,26 @@ class PublishSettingsDialog extends Container {
             .filter(p => p.frame >= 0 && p.frame < frames)
             .sort((a, b) => a.frame - b.frame);
 
-            // reset UI
             reset(orderedPoses.length > 0);
+
+            // filename is only shown in safari where file picker is not supported
+            filenameRow.hidden = !filename;
+            if (filename) {
+                filenameEntry.value = filename;
+                updateExtension();
+            }
 
             this.hidden = false;
             this.dom.addEventListener('keydown', keydown);
             this.dom.focus();
 
-            return new Promise<PublishSettings>((resolve) => {
+            return new Promise<null | ViewerExportSettings>((resolve) => {
                 onCancel = () => {
                     resolve(null);
                 };
 
-                onOK = () => {
-                    // extract camera starting position
+                onExport = () => {
+                    // extract camera starting pos
                     let pose;
                     switch (startSelect.value) {
                         case 'pose':
@@ -293,7 +357,6 @@ class PublishSettingsDialog extends Container {
                         }
                     }
 
-                    // build experience details
                     const experienceSettings: ExperienceSettings = {
                         camera: {
                             fov: fovSlider.value,
@@ -309,15 +372,12 @@ class PublishSettingsDialog extends Container {
                     };
 
                     const serializeSettings = {
-                        maxSHBands: bandsSlider.value,
-                        minOpacity: 1 / 255,                    // remove completely semitransparent splats
-                        removeInvalid: true                     // remove gaussians with any NaN data
+                        maxSHBands: bandsSlider.value
                     };
 
                     resolve({
-                        title: titleInput.value,
-                        description: descInput.value,
-                        listed: listBoolean.value,
+                        type: typeSelect.value,
+                        filename: filename && filenameEntry.value,
                         serializeSettings,
                         experienceSettings
                     });
@@ -339,4 +399,4 @@ class PublishSettingsDialog extends Container {
     }
 }
 
-export { PublishSettingsDialog };
+export { ViewerExportPopup };
