@@ -1,4 +1,4 @@
-import { Container, Element, Label, Menu } from '@playcanvas/pcui';
+import { Container, Element, Label, Menu } from 'pcui';
 
 type Direction = 'left' | 'right' | 'top' | 'bottom';
 
@@ -6,6 +6,7 @@ type MenuItem = {
     text?: string;
     icon?: string | Element;
     extra?: string | Element;
+    // eslint-disable-next-line no-use-before-define
     subMenu?: MenuPanel;
 
     isEnabled?: () => boolean;
@@ -47,6 +48,7 @@ const isString = (value: any) => {
 };
 
 class MenuPanel extends Container {
+    // eslint-disable-next-line no-use-before-define
     parentPanel: MenuPanel | null = null;
 
     constructor(menuItems: MenuItem[], args = {}) {

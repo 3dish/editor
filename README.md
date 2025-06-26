@@ -1,15 +1,14 @@
 # SuperSplat - 3D Gaussian Splat Editor
 
-## Brightness and  Blackpoint Update
+| [SuperSplat Editor](https://superspl.at/editor) | [User Guide](https://github.com/playcanvas/supersplat/wiki) | [Forum](https://forum.playcanvas.com/) | [Discord](https://discord.gg/RSaMRzg) |
 
- 
-The default values for **Brightness** and **Black Point** have been updated to 0.1
+SuperSplat is a free and open source tool for inspecting, editing, optimizing and publishing 3D Gaussian Splats. It is built on web technologies and runs in the browser, so there's nothing to download or install.
 
-Changed files:
-- `src/ui/color-panel.ts`: change made in the **const brightnessSlider** (line 137) and **const blackPointSLider** (line 159), and also in the "reset.on(click)" (lines 376/377).
-- `src/splat.ts`: values of "_brightness" and "_blackPoint" changed in lines 73/74
+A live version of this tool is available at: https://playcanvas.com/supersplat/editor
 
+![image](https://github.com/user-attachments/assets/b6cbb5cc-d3cc-4385-8c71-ab2807fd4fba)
 
+To learn more about using SuperSplat, please refer to the [User Guide](https://github.com/playcanvas/supersplat/wiki).
 
 ## Local Development
 
@@ -53,8 +52,3 @@ SuperSplat is made possible by our amazing open source community:
 <a href="https://github.com/playcanvas/supersplat/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=playcanvas/supersplat" />
 </a>
-
-
-
-
-

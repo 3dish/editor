@@ -1,4 +1,4 @@
-import { Container, Element, Label } from '@playcanvas/pcui';
+import { Container, Element, Label } from 'pcui';
 
 import { Events } from '../events';
 import { localize } from './localization';
@@ -113,6 +113,11 @@ class Menu extends Container {
             icon: createSvg(sceneExport),
             isEnabled: () => !events.invoke('scene.empty'),
             onSelect: () => events.invoke('scene.export', 'ply')
+        }, {
+            text: localize('file.export.compressed-ply'),
+            icon: createSvg(sceneExport),
+            isEnabled: () => !events.invoke('scene.empty'),
+            onSelect: () => events.invoke('scene.export', 'compressed-ply')
         }, {
             text: localize('file.export.splat'),
             icon: createSvg(sceneExport),

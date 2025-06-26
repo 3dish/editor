@@ -63,6 +63,8 @@ type ExperienceSettings = {
 
 type ViewerExportSettings = {
     type: 'html' | 'zip';
+    filename?: string;
+    serializeSettings: SerializeSettings;
     experienceSettings: ExperienceSettings;
 };
 
@@ -98,7 +100,7 @@ class GaussianFilter {
             }
 
             // optionally filter out unselected gaussians
-            if (onlySelected && (state[i] !== State.selected)) {
+            if (onlySelected && ((state[i] & State.selected) === 0)) {
                 return false;
             }
 
@@ -1028,12 +1030,12 @@ const encodeBase64 = (bytes: Uint8Array) => {
     return window.btoa(binary);
 };
 
-const serializeViewer = async (splats: Splat[], serializeSettings: SerializeSettings, options: ViewerExportSettings, writer: Writer) => {
+const serializeViewer = async (splats: Splat[], options: ViewerExportSettings, writer: Writer) => {
     const { experienceSettings } = options;
 
     // create compressed PLY data
     const plyWriter = new BufferWriter();
-    await serializePlyCompressed(splats, serializeSettings, plyWriter);
+    await serializePlyCompressed(splats, options.serializeSettings, plyWriter);
     const plyBuffer = plyWriter.close();
 
     if (options.type === 'html') {
