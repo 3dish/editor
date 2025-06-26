@@ -1,18 +1,17 @@
 import path from 'path';
-
+import copyAndWatch from './copy-and-watch.mjs';
 import image from '@rollup/plugin-image';
-import json from '@rollup/plugin-json';
+import terser from '@rollup/plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
 import strip from '@rollup/plugin-strip';
-import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
+import json from '@rollup/plugin-json';
+import { string } from 'rollup-plugin-string';
+
 import autoprefixer from 'autoprefixer';
 import postcss from 'postcss';
-import scss from 'rollup-plugin-scss';
-import { string } from 'rollup-plugin-string';
 import sass from 'sass';
-
-import copyAndWatch from './copy-and-watch.mjs';
+import scss from 'rollup-plugin-scss';
 
 // prod is release build
 if (process.env.BUILD_TYPE === 'prod') {
@@ -26,14 +25,14 @@ const PCUI_DIR = path.resolve('node_modules/@playcanvas/pcui');
 
 const outputHeader = () => {
     const BLUE_OUT = '\x1b[34m';
-    const BOLD_OUT = '\x1b[1m';
-    const REGULAR_OUT = '\x1b[22m';
-    const RESET_OUT = '\x1b[0m';
+    const BOLD_OUT = `\x1b[1m`;
+    const REGULAR_OUT = `\x1b[22m`;
+    const RESET_OUT = `\x1b[0m`;
 
     const title = [
-        'Building SuperSplat',
-        `type ${BOLD_OUT}${BUILD_TYPE}${REGULAR_OUT}`
-    ].map(l => `${BLUE_OUT}${l}`).join('\n');
+        `Building SuperSplat`,
+        `type ${BOLD_OUT}${BUILD_TYPE}${REGULAR_OUT}`,
+    ].map(l => `${BLUE_OUT}${l}`).join(`\n`);
     console.log(`${BLUE_OUT}${title}${RESET_OUT}\n`);
 };
 
@@ -74,15 +73,15 @@ const application = {
             runtime: sass,
             processor: (css) => {
                 return postcss([autoprefixer])
-                .process(css, { from: undefined })
-                .then(result => result.css);
+                    .process(css, { from: undefined })
+                    .then(result => result.css);
             },
             fileName: 'index.css',
-            includePaths: [`${PCUI_DIR}/dist`],
+            includePaths: [ PCUI_DIR + '/dist' ],
             exclude: ['submodules/**']
         }),
         string({
-            include: ['submodules/supersplat-viewer/dist/*']
+            include: [ 'submodules/supersplat-viewer/dist/*' ]
         }),
 
         BUILD_TYPE === 'release' &&
@@ -106,7 +105,7 @@ const serviceWorker = {
     plugins: [
         resolve(),
         json(),
-        typescript()
+        typescript(),
         // BUILD_TYPE !== 'debug' && terser()
     ],
     treeshake: 'smallest',
