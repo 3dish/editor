@@ -134,7 +134,7 @@ class ColorPanel extends Container {
             min: -1,
             max: 1,
             step: 0.1,
-            value: 1
+            value: 0.1
         });
 
         brightnessRow.append(brightnessLabel);
@@ -156,7 +156,7 @@ class ColorPanel extends Container {
             min: 0,
             max: 1,
             step: 0.01,
-            value: 0
+            value: 0.1
         });
 
         blackPointRow.append(blackPointLabel);
@@ -244,8 +244,8 @@ class ColorPanel extends Container {
             tintPicker.value = splat ? [splat.tintClr.r, splat.tintClr.g, splat.tintClr.b] : [1, 1, 1];
             temperatureSlider.value = splat ? splat.temperature : 0;
             saturationSlider.value = splat ? splat.saturation : 0;
-            brightnessSlider.value = splat ? splat.brightness : 0;
-            blackPointSlider.value = splat ? splat.blackPoint : 0;
+            brightnessSlider.value = splat ? splat.brightness : 0.1;
+            blackPointSlider.value = splat ? splat.blackPoint : 0.1;
             whitePointSlider.value = splat ? splat.whitePoint : 1;
             transparencySlider.value = splat ? Math.log(splat.transparency) : 0;
             suppress = false;
@@ -373,8 +373,8 @@ class ColorPanel extends Container {
                         tintClr: new Color(1, 1, 1),
                         temperature: 0,
                         saturation: 1,
-                        brightness: 0,
-                        blackPoint: 0,
+                        brightness: 0.1,
+                        blackPoint: 0.1,
                         whitePoint: 1,
                         transparency: 1
                     },
