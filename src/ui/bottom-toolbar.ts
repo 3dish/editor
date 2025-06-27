@@ -108,6 +108,9 @@ class BottomToolbar extends Container {
             icon: 'E189'
         });
 
+
+
+
         undo.dom.appendChild(createSvg(undoSvg));
         redo.dom.appendChild(createSvg(redoSvg));
         picker.dom.appendChild(createSvg(pickerSvg));
@@ -135,6 +138,21 @@ class BottomToolbar extends Container {
         this.append(scale);
         this.append(coordSpace);
         this.append(origin);
+
+
+        
+        /////////////// Add Center button (custom) ///////////////////////////////////////
+        const centerFitButton = new Button({
+            id: 'bottom-toolbar-center-fit',
+            class: 'bottom-toolbar-button',
+            text: 'Center'
+        });
+        this.append(centerFitButton);
+        tooltips.register(centerFitButton, localize('center-fit.tooltip'));
+        centerFitButton.on('click', () => {
+            events.fire('centerFit.selectedSplat');
+        });
+        ////////////////////////////////////////////////////////////////////////////////
 
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));
         redo.dom.addEventListener('click', () => events.fire('edit.redo'));
