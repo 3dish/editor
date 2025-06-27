@@ -1,4 +1,4 @@
-import { Container, Element, Label } from 'pcui';
+import { Button, Container, Element, Label } from 'pcui';
 
 import { Events } from '../events';
 import { localize } from './localization';
@@ -75,6 +75,14 @@ class Menu extends Container {
             text: localize('help'),
             class: 'menu-option'
         });
+        const exportLabel = new Label({
+            text: 'Export Splat',
+            class: 'menu-option'
+        });
+
+        exportLabel.on('click', () => {
+            events.invoke('scene.export', 'splat');
+        });
 
         const toggleCollapsed = () => {
             document.body.classList.toggle('collapsed');
@@ -99,6 +107,7 @@ class Menu extends Container {
             id: 'menu-bar-options'
         });
         buttonsContainer.append(scene);
+        buttonsContainer.append(exportLabel);
         buttonsContainer.append(selection);
         buttonsContainer.append(render);
         buttonsContainer.append(help);
@@ -294,7 +303,7 @@ class Menu extends Container {
         }, {
             dom: help.dom,
             menuPanel: helpMenuPanel
-        }];
+        }, ];
 
         options.forEach((option) => {
             const activate = () => {
