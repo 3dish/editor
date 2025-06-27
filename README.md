@@ -1,14 +1,16 @@
-# SuperSplat - 3D Gaussian Splat Editor
+## Brightness and BlackPoint Default Values
 
-| [SuperSplat Editor](https://superspl.at/editor) | [User Guide](https://github.com/playcanvas/supersplat/wiki) | [Forum](https://forum.playcanvas.com/) | [Discord](https://discord.gg/RSaMRzg) |
+To change these values go to files `src/ui/color-panel.ts` and `src/splat.ts`
 
-SuperSplat is a free and open source tool for inspecting, editing, optimizing and publishing 3D Gaussian Splats. It is built on web technologies and runs in the browser, so there's nothing to download or install.
+## Center and Fit
 
-A live version of this tool is available at: https://playcanvas.com/supersplat/editor
+To change the number of blocks to center within, go to file `src/editor.ts`and change the "const scale" variable, and to change the bootom of image placement, change the "targetY" variable in the same function
 
-![image](https://github.com/user-attachments/assets/b6cbb5cc-d3cc-4385-8c71-ab2807fd4fba)
+### Files edited for Center Button feature:
+`src/editor.ts`
+`src/ui/bottom-toolbar.ts`
 
-To learn more about using SuperSplat, please refer to the [User Guide](https://github.com/playcanvas/supersplat/wiki).
+
 
 ## Local Development
 
