@@ -643,6 +643,62 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         events.fire('camera.setBound', docView.showBound);
         events.fire('camera.setFlySpeed', docView.flySpeed);
     });
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+
+    // Center & Fit: Center and scale the selected splat to fit within ±0.5 units on X and Z (5 small grid blocks each side), and center at (0,0,0)
+    events.on('centerFit.selectedSplat', (targetY = -0.023) => {     // targetY definition
+        const splat = events.invoke('selection');
+        if (!splat) return;
+    
+        // Get the local bounding box
+        const bound = splat.localBound;
+        const center = bound.center.clone();
+        const halfExtents = bound.halfExtents;
+        // Use X and Z for the xz plane
+        const maxExtent = Math.max(halfExtents.x, halfExtents.z);
+        if (maxExtent === 0) return;
+    
+        // Each small grid block is 0.1 units, so 5 blocks = 0.5 units
+        // Fit within -0.5 to +0.5 (total 1.0 units) on X and Z
+        const scale = 0.5 / maxExtent;
+        splat.entity.setLocalScale(scale, scale, scale);
+    
+        // Recompute bounds after scaling
+        splat.makeSelectionBoundDirty?.();
+        splat.updatePositions?.();
+    
+        // Now get the world bounding box center
+        const worldBound = splat.worldBound;
+        const worldCenter = worldBound.center.clone();
+    
+        // Offset the splat so the world center is at (0,0,0)
+        const currentPos = splat.entity.getLocalPosition();
+        splat.entity.setLocalPosition(
+            currentPos.x - worldCenter.x,
+            currentPos.y - worldCenter.y,
+            currentPos.z - worldCenter.z
+        );
+    
+        splat.makeSelectionBoundDirty?.();
+        splat.updatePositions?.();
+
+        // --- Move the splat so its lowest point sits on the xz plane (y=targetY) ---
+        const updatedWorldBound = splat.worldBound;
+        const bottomY = updatedWorldBound.center.y - updatedWorldBound.halfExtents.y;
+        if (Math.abs(bottomY - targetY) > 1e-6) { // avoid unnecessary move if already at targetY
+            const pos = splat.entity.getLocalPosition();
+            splat.entity.setLocalPosition(pos.x, pos.y - (bottomY - targetY), pos.z);
+            splat.makeSelectionBoundDirty?.();
+            splat.updatePositions?.();
+        }
+        // ---------------------------------------------------------------------
+        
+        // Fire selection.changed to update the gizmo/pivot
+        events.fire('selection.changed', splat);
+        events.fire('pivot.setOrigin', 'center'); // or 'boundCenter' if you want the bound center
+    });
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 };
 
 export { registerEditorEvents };
