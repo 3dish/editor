@@ -154,6 +154,19 @@ class BottomToolbar extends Container {
         });
         ////////////////////////////////////////////////////////////////////////////////
 
+        /////////////// Add Custom Camera Position button ///////////////////////////////////////
+        const customCameraButton = new Button({
+            id: 'bottom-toolbar-custom-camera',
+            class: 'bottom-toolbar-button',
+            text: 'Set Camera'
+        });
+        this.append(customCameraButton);
+        tooltips.register(customCameraButton, 'Set Camera');
+        customCameraButton.on('click', () => {
+            events.fire('camera.setCustomPosition');
+        });
+        /////////////////////////////////////////////////////////////////////////////////////////
+
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));
         redo.dom.addEventListener('click', () => events.fire('edit.redo'));
         polygon.dom.addEventListener('click', () => events.fire('tool.polygonSelection'));
