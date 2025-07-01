@@ -10,6 +10,18 @@ To change the number of blocks to center within, go to file `src/editor.ts`and c
 `src/editor.ts`
 `src/ui/bottom-toolbar.ts`
 
+## Export Button
+
+Files changed:
+`src/ui/menu.ts`
+`src/ui/viewer-export-popup.ts`
+
+
+## Set Camera Position for 2D image
+
+The Set Camera Position feature was added in the following files:
+- `src/editor.ts`
+- `src/ui/bottom-toolbar.ts`
 
 
 ## Local Development
