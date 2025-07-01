@@ -144,11 +144,11 @@ class EditorUI {
             id: 'main-container'
         });
 
-        const timelinePanel = new TimelinePanel(events, tooltips);
+        //onst timelinePanel = new TimelinePanel(events, tooltips);
         const dataPanel = new DataPanel(events);
 
         mainContainer.append(canvasContainer);
-        mainContainer.append(timelinePanel);
+        //mainContainer.append(timelinePanel);
         mainContainer.append(dataPanel);
 
         editorContainer.append(mainContainer);
