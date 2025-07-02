@@ -158,7 +158,7 @@ class BottomToolbar extends Container {
         const customCameraButton = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
-            text: 'Set Camera'
+            text: 'Camera'
         });
         this.append(customCameraButton);
         tooltips.register(customCameraButton, 'Set Camera');
@@ -166,6 +166,19 @@ class BottomToolbar extends Container {
             events.fire('camera.setCustomPosition');
         });
         /////////////////////////////////////////////////////////////////////////////////////////
+
+        /////////////// Add Remove Below XZ button ///////////////////////////////////////
+        const removeBelowXZButton = new Button({
+            id: 'bottom-toolbar-remove-below-xz',
+            class: 'bottom-toolbar-button',
+            text: 'Remove'
+        });
+        this.append(removeBelowXZButton);
+        tooltips.register(removeBelowXZButton, 'Remove all splats below the XZ plane (y < 0)');
+        removeBelowXZButton.on('click', () => {
+            events.fire('splats.selectBelowXZ');
+        });
+        //////////////////////////////////////////////////////////////////////////////////
 
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));
         redo.dom.addEventListener('click', () => events.fire('edit.redo'));

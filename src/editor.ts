@@ -7,6 +7,7 @@ import { Scene } from './scene';
 import { BufferWriter } from './serialize/writer';
 import { Splat } from './splat';
 import { serializePly } from './splat-serialize';
+import { ElementType } from './element';   ////added for remove below xz
 
 // register for editor and scene events
 const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: Scene) => {
@@ -701,12 +702,35 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Custom camera position event handler
+    // Custom camera position event handler(Camera Button)///////////////////////////////////////
     events.on('camera.setCustomPosition', () => {
-        scene.camera.setFocalPoint(new Vec3(0, 0.1, 0), 0);
+        scene.camera.setFocalPoint(new Vec3(0, 0, 0), 0);
         scene.camera.setAzimElev(0, -60, 0);
         scene.camera.setDistance(0.39, 0);
     });
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
+
+    // Remove all splats under the xz plane (y < 0)////////////////////////////
+    events.on('splats.selectBelowXZ', () => {
+        const splats = scene.getElementsByType(ElementType.splat);
+        splats.forEach((splatElem) => {
+            const splat = splatElem as Splat;
+            const tempVec = new Vec3();
+            // Create a filter function for SelectOp
+            const filter = (i: number) => {
+                if (splat.calcSplatWorldPosition(i, tempVec)) {
+                    return tempVec.y < 0;
+                }
+                return false;
+            };
+            // Use the same selection operation as the brush tool
+            events.fire('edit.add', new SelectOp(splat, 'add', filter));
+        });
+        selectedSplats().forEach((splat) => {
+            editHistory.add(new DeleteSelectionOp(splat));
+        });
+    });
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 };
 
 export { registerEditorEvents };
