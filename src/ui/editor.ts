@@ -223,8 +223,8 @@ class EditorUI {
             }
         });
 
-        events.function('show.imageSettingsDialog', async () => {
-            const imageSettings = await imageSettingsDialog.show();
+        events.function('show.imageSettingsDialog', async (initial) => {
+            const imageSettings = await imageSettingsDialog.show(initial);
 
             if (imageSettings) {
                 await events.invoke('render.image', imageSettings);

@@ -2,7 +2,7 @@
 
 To change these values go to files `src/ui/color-panel.ts` and `src/splat.ts`
 
-## Center and Fit
+## Center and Fit buttons
 
 To change the number of blocks to center within, go to file `src/editor.ts`and change the "const scale" variable, and to change the bootom of image placement, change the "targetY" variable in the same function
 
@@ -19,7 +19,7 @@ Files changed:
 
 ## Set Camera Position for 2D image
 
-Cam1 and Cam2 buttons:
+Camera buttons:
 The Set Camera Position feature was added in the following files:
 - `src/editor.ts`
 - `src/ui/bottom-toolbar.ts`
@@ -29,6 +29,8 @@ The Set Camera Position feature was added in the following files:
 Removes the splats below xz plane (y<0)
 - `src/editor.ts`
 - `src/ui/bottom-toolbar.ts`
+
+## New Image Export Button
 
 ## Local Development
 

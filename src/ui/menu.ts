@@ -84,6 +84,16 @@ class Menu extends Container {
             events.invoke('scene.export', 'splat');
         });
 
+        //////////// New Image button //////////////////////////////////////////////////////
+        const quickImageRender = new Label({
+            text: 'Image Export',
+            class: 'menu-option'
+        });
+        quickImageRender.on('click', () => {
+            events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 320, height: 320, transparentBg: true });
+        });
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+
         const toggleCollapsed = () => {
             document.body.classList.toggle('collapsed');
         };
@@ -111,6 +121,7 @@ class Menu extends Container {
         buttonsContainer.append(selection);
         buttonsContainer.append(render);
         buttonsContainer.append(help);
+        buttonsContainer.append(quickImageRender);
         buttonsContainer.append(collapse);
         buttonsContainer.append(arrow);
 

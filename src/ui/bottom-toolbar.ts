@@ -142,15 +142,28 @@ class BottomToolbar extends Container {
 
         
         /////////////// Add Center button (custom) ///////////////////////////////////////
+        //First Center button
         const centerFitButton = new Button({
             id: 'bottom-toolbar-center-fit',
             class: 'bottom-toolbar-button',
-            text: 'Center'
+            text: 'Center1'
         });
         this.append(centerFitButton);
         tooltips.register(centerFitButton, localize('center-fit.tooltip'));
         centerFitButton.on('click', () => {
             events.fire('centerFit.selectedSplat');
+        });
+
+        //Second Center button
+        const centerFitButton2 = new Button({
+            id: 'bottom-toolbar-center-fit',
+            class: 'bottom-toolbar-button',
+            text: 'Center2'
+        });
+        this.append(centerFitButton2);
+        tooltips.register(centerFitButton2, localize('center-fit.tooltip'));
+        centerFitButton2.on('click', () => {
+            events.fire('centerFit.selectedSplat2');
         });
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -175,6 +188,17 @@ class BottomToolbar extends Container {
         tooltips.register(customCamera2Button, 'Set Camera');
         customCamera2Button.on('click', () => {
             events.fire('camera.setCustomPosition2');
+        });
+
+        const customCamera3Button = new Button({
+            id: 'bottom-toolbar-custom-camera',
+            class: 'bottom-toolbar-button',
+            text: 'Cam3'
+        });
+        this.append(customCamera3Button);
+        tooltips.register(customCamera3Button, 'Set Camera');
+        customCamera3Button.on('click', () => {
+            events.fire('camera.setCustomPosition3');
         });
         /////////////////////////////////////////////////////////////////////////////////////////
 

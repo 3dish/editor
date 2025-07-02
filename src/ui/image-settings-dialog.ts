@@ -14,7 +14,8 @@ const createSvg = (svgString: string, args = {}) => {
 };
 
 class ImageSettingsDialog extends Container {
-    show: () => Promise<ImageSettings | null>;
+    //show: () => Promise<ImageSettings | null>;
+    show: (initial?: { width?: number, height?: number, transparentBg?: boolean, preset?: string }) => Promise<ImageSettings | null>;
     hide: () => void;
     destroy: () => void;
 
@@ -180,10 +181,26 @@ class ImageSettingsDialog extends Container {
 
         // function implementations
 
-        this.show = () => {
+        //this.show = () => {
+        this.show = (initial?: { width?: number, height?: number, transparentBg?: boolean, preset?: string }) => {
             targetSize = events.invoke('targetSize');
 
             reset();
+
+            // Set initial values if provided
+            if (initial) {
+                if (initial.preset) {
+                    presetSelect.value = initial.preset;
+                }
+                if (initial.width && initial.height) {
+                    presetSelect.value = 'custom';
+                    resolutionValue.value = [initial.width, initial.height];
+                    resolutionRow.enabled = true;
+                }
+                if (initial.transparentBg !== undefined) {
+                    transparentBgBoolean.value = initial.transparentBg;
+                }
+            }
 
             this.hidden = false;
             this.dom.addEventListener('keydown', keydown);
