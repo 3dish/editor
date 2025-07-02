@@ -23,6 +23,11 @@ The Set Camera Position feature was added in the following files:
 - `src/editor.ts`
 - `src/ui/bottom-toolbar.ts`
 
+## Remove Button
+
+Removes the splats below xz plane (y<0)
+- `src/editor.ts`
+- `src/ui/bottom-toolbar.ts`
 
 ## Local Development
 
