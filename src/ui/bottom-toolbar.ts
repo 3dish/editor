@@ -155,15 +155,26 @@ class BottomToolbar extends Container {
         ////////////////////////////////////////////////////////////////////////////////
 
         /////////////// Add Custom Camera Position button ///////////////////////////////////////
-        const customCameraButton = new Button({
+        const customCamera1Button = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
-            text: 'Camera'
+            text: 'Cam1'
         });
-        this.append(customCameraButton);
-        tooltips.register(customCameraButton, 'Set Camera');
-        customCameraButton.on('click', () => {
+        this.append(customCamera1Button);
+        tooltips.register(customCamera1Button, 'Set Camera');
+        customCamera1Button.on('click', () => {
             events.fire('camera.setCustomPosition');
+        });
+
+        const customCamera2Button = new Button({
+            id: 'bottom-toolbar-custom-camera',
+            class: 'bottom-toolbar-button',
+            text: 'Cam2'
+        });
+        this.append(customCamera2Button);
+        tooltips.register(customCamera2Button, 'Set Camera');
+        customCamera2Button.on('click', () => {
+            events.fire('camera.setCustomPosition2');
         });
         /////////////////////////////////////////////////////////////////////////////////////////
 
