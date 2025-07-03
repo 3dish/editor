@@ -18,7 +18,10 @@
 }
 
 .bottom-toolbar-button, .bottom-toolbar-tool, .bottom-toolbar-toggle {
-    width: 50px;
+    display: flex;                // Make the button a flex container
+    align-items: center;          // Center vertically
+    justify-content: center;      // Center horizontally
+    width: 50px; 
     height: 50px;
     margin: 0px 1px;
     padding: 0px;
@@ -67,12 +70,12 @@
 
     &.disabled {
         background-color: $bcg-dark;
-
         svg {
             color: $clr-disabled;
         }
     }
 }
+
 
 .bottom-toolbar-toggle.active {
     &::before {
@@ -83,3 +86,18 @@
         color: $clr-hilight;
     }
 }
+
+#bottom-toolbar.collapsed {
+    min-width: unset;
+    width: auto;
+    padding: 0 10px;
+    justify-content: center;
+    .bottom-toolbar-tool,
+    .bottom-toolbar-toggle {
+        display: none;
+    }
+    .always-visible {
+        display: inline-flex !important;
+    }
+}
+
