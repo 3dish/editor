@@ -19,6 +19,7 @@ Files changed:
 
 ## Set Camera Position for 2D image
 
+Cam1 and Cam2 buttons:
 The Set Camera Position feature was added in the following files:
 - `src/editor.ts`
 - `src/ui/bottom-toolbar.ts`
