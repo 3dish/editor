@@ -165,6 +165,7 @@ class BottomToolbar extends Container {
             class: 'bottom-toolbar-button',
             text: 'Center1'
         });
+        centerFitButton.dom.classList.add('toolbar-center-btn');
         this.append(centerFitButton);
         tooltips.register(centerFitButton, localize('center-fit.tooltip'));
         centerFitButton.on('click', () => {
@@ -177,6 +178,7 @@ class BottomToolbar extends Container {
             class: 'bottom-toolbar-button',
             text: 'Center2'
         });
+        centerFitButton2.dom.classList.add('toolbar-center-btn');
         this.append(centerFitButton2);
         tooltips.register(centerFitButton2, localize('center-fit.tooltip'));
         centerFitButton2.on('click', () => {
@@ -191,6 +193,7 @@ class BottomToolbar extends Container {
             class: 'bottom-toolbar-button',
             text: 'Cam1'
         });
+        customCamera1Button.dom.classList.add('toolbar-camera-btn');
         this.append(customCamera1Button);
         tooltips.register(customCamera1Button, 'Set Camera');
         customCamera1Button.on('click', () => {
@@ -203,6 +206,7 @@ class BottomToolbar extends Container {
             class: 'bottom-toolbar-button',
             text: 'Cam2'
         });
+        customCamera2Button.dom.classList.add('toolbar-camera-btn');
         this.append(customCamera2Button);
         tooltips.register(customCamera2Button, 'Set Camera');
         customCamera2Button.on('click', () => {
@@ -215,6 +219,7 @@ class BottomToolbar extends Container {
             class: 'bottom-toolbar-button',
             text: 'Cam3'
         });
+        customCamera3Button.dom.classList.add('toolbar-camera-btn');
         this.append(customCamera3Button);
         tooltips.register(customCamera3Button, 'Set Camera');
         customCamera3Button.on('click', () => {
@@ -229,6 +234,7 @@ class BottomToolbar extends Container {
             class: 'bottom-toolbar-button',
             text: 'Remove'
         });
+        removeBelowXZButton.dom.classList.add('toolbar-remove-btn');
         this.append(removeBelowXZButton);
         tooltips.register(removeBelowXZButton, 'Remove all splats below the XZ plane (y < 0)');
         removeBelowXZButton.on('click', () => {
