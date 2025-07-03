@@ -79,7 +79,7 @@ class Menu extends Container {
             text: 'Export Splat',
             class: 'menu-option'
         });
-
+        exportLabel.dom.classList.add('menu-option-persistent'); //added for persistent button
         exportLabel.on('click', () => {
             events.invoke('scene.export', 'splat');
         });
@@ -89,6 +89,7 @@ class Menu extends Container {
             text: 'Image Export',
             class: 'menu-option'
         });
+        quickImageRender.dom.classList.add('menu-option-persistent'); //added for persistent button
         quickImageRender.on('click', () => {
             events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 320, height: 320, transparentBg: true });
         });
@@ -98,10 +99,8 @@ class Menu extends Container {
             document.body.classList.toggle('collapsed');
         };
 
-        // collapse menu on mobile
-        if (document.body.clientWidth < 600) {
-            toggleCollapsed();
-        }
+        // Always start with menu collapsed
+        document.body.classList.add('collapsed');
 
         const collapse = createSvg(collapseSvg);
         collapse.dom.classList.add('menu-icon');
@@ -117,10 +116,12 @@ class Menu extends Container {
             id: 'menu-bar-options'
         });
         buttonsContainer.append(scene);
-        buttonsContainer.append(exportLabel);
         buttonsContainer.append(selection);
         buttonsContainer.append(render);
         buttonsContainer.append(help);
+        buttonsContainer.append(collapse);
+        buttonsContainer.append(arrow);
+        buttonsContainer.append(exportLabel);
         buttonsContainer.append(quickImageRender);
         buttonsContainer.append(collapse);
         buttonsContainer.append(arrow);

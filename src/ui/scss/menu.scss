@@ -75,11 +75,18 @@
         background-color: $bcg-dark;
     }
 }
+ 
+.menu-option-persistent {  //added for persistent button
+    display: inline-flex !important;
+}
 
 .collapsed {
     #menu-bar {
-        width: 90px;
+        width: auto;
+        min-width: unset;
+        padding-right: 8px;
     }
+    
 
     #menu-collapse {
         display: none;
