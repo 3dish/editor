@@ -23,6 +23,7 @@ import { ViewCube } from './view-cube';
 import { ViewPanel } from './view-panel';
 import { ViewerExportPopup } from './viewer-export-popup';
 import { version } from '../../package.json';
+           //added for file navigator
 
 class EditorUI {
     appContainer: Container;
@@ -223,8 +224,8 @@ class EditorUI {
             }
         });
 
-        events.function('show.imageSettingsDialog', async () => {
-            const imageSettings = await imageSettingsDialog.show();
+        events.function('show.imageSettingsDialog', async (initial) => {
+            const imageSettings = await imageSettingsDialog.show(initial);
 
             if (imageSettings) {
                 await events.invoke('render.image', imageSettings);

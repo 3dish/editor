@@ -11,14 +11,18 @@ import sphereSvg from './svg/select-sphere.svg';
 import boxSvg from './svg/show-hide-splats.svg';
 import undoSvg from './svg/undo.svg';
 import { Tooltips } from './tooltips';
-// import cropSvg from './svg/crop.svg';
+import arrowSvg from './svg/arrow.svg';
+import collapseSvg from './svg/collapse.svg';
 
 const createSvg = (svgString: string) => {
     const decodedStr = decodeURIComponent(svgString.substring('data:image/svg+xml,'.length));
-    return new DOMParser().parseFromString(decodedStr, 'image/svg+xml').documentElement;
+    return new DOMParser().parseFromString(decodedStr, 'image/svg+xml').documentElement as HTMLElement;
 };
 
 class BottomToolbar extends Container {
+    private collapsed = true;                 //!added for collapse/expand button
+    private collapseButton: Button;            //!added for collapse/expand button                                   
+    private alwaysVisibleButtons: Button[];    //!added for collapse/expand button
     constructor(events: Events, tooltips: Tooltips, args = {}) {
         args = {
             ...args,
@@ -108,8 +112,22 @@ class BottomToolbar extends Container {
             icon: 'E189'
         });
 
-
-
+        //! Collapse/Expand button added(styled like menu bar)/////////////////
+        this.collapseButton = new Button({
+            id: 'bottom-toolbar-collapse',
+            class: 'bottom-toolbar-button',
+        });
+        // Set initial icon to match open state
+        this.collapseButton.dom.innerHTML = '';
+        const initialIcon = createSvg(collapseSvg);
+        initialIcon.classList.add('menu-icon');
+        initialIcon.style.transform = '';
+        this.collapseButton.dom.appendChild(initialIcon);
+        this.append(this.collapseButton);
+        this.collapseButton.on('click', () => {
+            this.toggleCollapse();
+        });
+        /////////////////////////////////////////////////////////////////////////
 
         undo.dom.appendChild(createSvg(undoSvg));
         redo.dom.appendChild(createSvg(redoSvg));
@@ -141,20 +159,33 @@ class BottomToolbar extends Container {
 
 
         
-        /////////////// Add Center button (custom) ///////////////////////////////////////
+        //! First Center button
         const centerFitButton = new Button({
             id: 'bottom-toolbar-center-fit',
             class: 'bottom-toolbar-button',
-            text: 'Center'
+            text: 'Center1'
         });
         this.append(centerFitButton);
         tooltips.register(centerFitButton, localize('center-fit.tooltip'));
         centerFitButton.on('click', () => {
             events.fire('centerFit.selectedSplat');
         });
-        ////////////////////////////////////////////////////////////////////////////////
 
-        /////////////// Add Custom Camera Position button ///////////////////////////////////////
+        //! Second Center button
+        const centerFitButton2 = new Button({
+            id: 'bottom-toolbar-center-fit',
+            class: 'bottom-toolbar-button',
+            text: 'Center2'
+        });
+        this.append(centerFitButton2);
+        tooltips.register(centerFitButton2, localize('center-fit.tooltip'));
+        centerFitButton2.on('click', () => {
+            events.fire('centerFit.selectedSplat2');
+        });
+        
+
+        //! Custom Camera Position buttons
+        //! Camera 1 ----
         const customCamera1Button = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
@@ -166,6 +197,7 @@ class BottomToolbar extends Container {
             events.fire('camera.setCustomPosition');
         });
 
+        //! Camera 2 ----
         const customCamera2Button = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
@@ -176,9 +208,22 @@ class BottomToolbar extends Container {
         customCamera2Button.on('click', () => {
             events.fire('camera.setCustomPosition2');
         });
-        /////////////////////////////////////////////////////////////////////////////////////////
 
-        /////////////// Add Remove Below XZ button ///////////////////////////////////////
+        //! Camera 3 ----
+        const customCamera3Button = new Button({
+            id: 'bottom-toolbar-custom-camera',
+            class: 'bottom-toolbar-button',
+            text: 'Cam3'
+        });
+        this.append(customCamera3Button);
+        tooltips.register(customCamera3Button, 'Set Camera');
+        customCamera3Button.on('click', () => {
+            events.fire('camera.setCustomPosition3');
+        });
+
+
+
+        //! Remove Button: Removes all splats under the xz plane (y < 0)---------------------------------------
         const removeBelowXZButton = new Button({
             id: 'bottom-toolbar-remove-below-xz',
             class: 'bottom-toolbar-button',
@@ -189,7 +234,7 @@ class BottomToolbar extends Container {
         removeBelowXZButton.on('click', () => {
             events.fire('splats.selectBelowXZ');
         });
-        //////////////////////////////////////////////////////////////////////////////////
+
 
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));
         redo.dom.addEventListener('click', () => events.fire('edit.redo'));
@@ -247,7 +292,51 @@ class BottomToolbar extends Container {
         tooltips.register(scale, localize('tooltip.scale'));
         tooltips.register(coordSpace, localize('tooltip.local-space'));
         tooltips.register(origin, localize('tooltip.bound-center'));
+
+
+
+        //! Store always-visible buttons for collapse logic
+        this.alwaysVisibleButtons = [
+            this.collapseButton,
+            centerFitButton,
+            centerFitButton2,
+            customCamera1Button,
+            customCamera2Button,
+            customCamera3Button,
+            removeBelowXZButton
+        ];
+        // Add always-visible class for CSS
+        for (const btn of this.alwaysVisibleButtons) {
+            btn.class.add('always-visible');
+        }
+
+        // Ensure toolbar starts collapsed
+        this.applyCollapseState();
     }
+
+    //! Apply collapse to the toolbar
+    applyCollapseState() {
+        this.dom.classList.toggle('collapsed', this.collapsed);
+        this.collapseButton.dom.innerHTML = '';
+        const icon = createSvg(collapseSvg);
+        icon.classList.add('menu-icon');
+        icon.style.transform = this.collapsed ? 'rotate(180deg)' : '';
+        this.collapseButton.dom.appendChild(icon);
+        Array.from(this.dom.children).forEach((child: HTMLElement) => {
+            const btn = (child as any).ui;
+            if (btn instanceof Button && !this.alwaysVisibleButtons.includes(btn)) {
+                btn.hidden = this.collapsed;
+            }
+            if (child.classList && child.classList.contains('bottom-toolbar-separator')) {
+                child.style.display = this.collapsed ? 'none' : '';
+            }
+        });
+    }
+    toggleCollapse() {
+        this.collapsed = !this.collapsed;
+        this.applyCollapseState();
+    }
+    
 }
 
 export { BottomToolbar };

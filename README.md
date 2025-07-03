@@ -30,6 +30,11 @@ Removes the splats below xz plane (y<0)
 - `src/editor.ts`
 - `src/ui/bottom-toolbar.ts`
 
+## Files Edited for the New Buttons and Toggle buttons
+- `src/editor.ts`
+- `src/ui/bottom-toolbar.ts`
+- `src/ui/scss/bottom-toolbar.scss`
+
 ## Local Development
 
 To initialize a local development environment for SuperSplat, ensure you have [Node.js](https://nodejs.org/) 18 or later installed. Follow these steps:
