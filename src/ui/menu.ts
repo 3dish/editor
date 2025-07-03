@@ -75,6 +75,8 @@ class Menu extends Container {
             text: localize('help'),
             class: 'menu-option'
         });
+
+        //! Export Splat button
         const exportLabel = new Label({
             text: 'Export Splat',
             class: 'menu-option'
@@ -84,7 +86,7 @@ class Menu extends Container {
             events.invoke('scene.export', 'splat');
         });
 
-        //////////// New Image button //////////////////////////////////////////////////////
+        //! Image Export button
         const quickImageRender = new Label({
             text: 'Image Export',
             class: 'menu-option'
@@ -93,7 +95,18 @@ class Menu extends Container {
         quickImageRender.on('click', () => {
             events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 320, height: 320, transparentBg: true });
         });
-        //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //! Delete Workspace button
+        const resetWorkspaceLabel = new Label({
+            text: 'Delete',
+            class: 'menu-option'
+        });
+        resetWorkspaceLabel.dom.classList.add('menu-option-persistent'); // added for persistent button
+        resetWorkspaceLabel.on('click', () => {
+            events.invoke('doc.new');
+        });
+
+
 
         const toggleCollapsed = () => {
             document.body.classList.toggle('collapsed');
@@ -123,6 +136,7 @@ class Menu extends Container {
         buttonsContainer.append(arrow);
         buttonsContainer.append(exportLabel);
         buttonsContainer.append(quickImageRender);
+        buttonsContainer.append(resetWorkspaceLabel);
         buttonsContainer.append(collapse);
         buttonsContainer.append(arrow);
 
