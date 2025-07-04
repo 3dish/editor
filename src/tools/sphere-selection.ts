@@ -92,9 +92,12 @@ class SphereSelection {
 
         this.activate = () => {
             this.active = true;
+            sphere.pivot.setPosition(0, 1.83, 0);            //! pivot of sphere inialized to 0,0,0
             scene.add(sphere);
             gizmo.attach([sphere.pivot]);
             selectToolbar.hidden = false;
+            apply('set');                                  //! added to apply the sphere selection
+            events.fire('select.invert');                  //! added to do Ctrl+I to invert the selection
         };
 
         this.deactivate = () => {

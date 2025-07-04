@@ -19,7 +19,7 @@ const v = new Vec3();
 const bound = new BoundingBox();
 
 class SphereShape extends Element {
-    _radius = 1;
+    _radius = 1.896;                        //! radius of sphere inialized from 1 to 1.9
     pivot: Entity;
     material: ShaderMaterial;
 
