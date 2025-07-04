@@ -10,7 +10,8 @@ import sceneExport from './svg/export.svg';
 import sceneImport from './svg/import.svg';
 import sceneNew from './svg/new.svg';
 import sceneOpen from './svg/open.svg';
-import logoSvg from './svg/playcanvas-logo.svg';
+//import logoSvg from './svg/playcanvas-logo.svg';
+import logoPng from './3dish-logo.png';
 import scenePublish from './svg/publish.svg';
 import sceneSave from './svg/save.svg';
 import selectAll from './svg/select-all.svg';
@@ -46,7 +47,7 @@ class Menu extends Container {
         });
 
         const iconDom = document.createElement('img');
-        iconDom.src = logoSvg;
+        iconDom.src = logoPng;   //3dish logo
         iconDom.setAttribute('id', 'app-icon');
         iconDom.addEventListener('pointerdown', (event) => {
             window.open('https://playcanvas.com', '_blank').focus();

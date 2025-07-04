@@ -35,6 +35,12 @@ Removes the splats below xz plane (y<0)
 - `src/ui/bottom-toolbar.ts`
 - `src/ui/scss/bottom-toolbar.scss`
 
+## Rotation set to (0, 0, 179.3)
+
+Files edited
+`src/ui/transform.ts`
+`src/asset-loader.ts`
+
 ## Local Development
 
 To initialize a local development environment for SuperSplat, ensure you have [Node.js](https://nodejs.org/) 18 or later installed. Follow these steps:

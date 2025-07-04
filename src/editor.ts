@@ -762,7 +762,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
     //? Camera 1 ----
     events.on('camera.setCustomPosition', () => {
         scene.camera.setFocalPoint(new Vec3(0, 0, 0), 0);
-        scene.camera.setAzimElev(0, -60, 0);
+        scene.camera.setAzimElev(0, -45, 0);
         scene.camera.setDistance(0.39, 0);
     });
 
@@ -803,6 +803,8 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         selectedSplats().forEach((splat) => {
             editHistory.add(new DeleteSelectionOp(splat));
         });
+
+        
     });
     
 };
