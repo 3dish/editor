@@ -143,9 +143,9 @@ class AssetLoader {
                 if (missing.length > 0) {
                     reject(new Error(`This file does not contain gaussian splatting data. The following properties are missing: ${missing.join(', ')}`));
                 } else {
-                    //!resolve(new Splat(asset));
+                    //resolve(new Splat(asset));
                     const splat = new Splat(asset);
-                    splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 179.3));
+                    splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 179.3));   //! changed from 179.3 to 179.2
                     resolve(splat);
                 }
             });
@@ -182,9 +182,9 @@ class AssetLoader {
                     filename: loadRequest.filename
                 });
                 asset.resource = new GSplatResource(this.app, gsplatData, []);
-                //!resolve(new Splat(asset));
+                //resolve(new Splat(asset));
                 const splat = new Splat(asset);
-                splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 179.3));
+                splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 179.3));    //! changed from 179.3 to 179.2
                 resolve(splat);
             })
             .catch((err) => {

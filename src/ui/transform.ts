@@ -80,7 +80,7 @@ class Transform extends Container {
             class: 'transform-expand',
             precision: 2,
             dimensions: 3,
-            value: [0, 0, 179.3],                     //! changed from 0,0,0 to 0,0,179
+            value: [0, 0, 179.3],                     //! changed from 0,0,0 to 0,0,179.3
             enabled: false
         });
 

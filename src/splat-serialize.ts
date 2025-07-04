@@ -237,8 +237,7 @@ class SplatTransformCache {
 
                 // we must undo the transform we apply at load time to output data
                 if (!keepWorldTransform) {
-                    //mat.setFromEulerAngles(0, 0, -180);
-                    mat.setFromEulerAngles(0, 0, 179.2);
+                    mat.setFromEulerAngles(0, 0, -180);
                     mat.mul2(mat, splat.entity.getWorldTransform());
                 }
 
