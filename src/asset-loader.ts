@@ -145,7 +145,7 @@ class AssetLoader {
                 } else {
                     //resolve(new Splat(asset));
                     const splat = new Splat(asset);
-                    splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 179.3));   //! changed from 179.3 to 179.2
+                    splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 180));   //! changed from 179.3 to 179.2
                     resolve(splat);
                 }
             });
@@ -184,7 +184,7 @@ class AssetLoader {
                 asset.resource = new GSplatResource(this.app, gsplatData, []);
                 //resolve(new Splat(asset));
                 const splat = new Splat(asset);
-                splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 179.3));    //! changed from 179.3 to 179.2
+                splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 180));    //! changed from 179.3 to 179.2
                 resolve(splat);
             })
             .catch((err) => {

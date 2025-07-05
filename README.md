@@ -41,6 +41,14 @@ Files edited
 `src/ui/transform.ts`
 `src/asset-loader.ts`
 
+## Sphere button Update
+
+Files changed:
+`src/ui/sphere-shape.ts`
+`src/tools/sphere-selection.ts`
+
+
+
 ## Local Development
 
 To initialize a local development environment for SuperSplat, ensure you have [Node.js](https://nodejs.org/) 18 or later installed. Follow these steps:
