@@ -123,32 +123,55 @@ class EditorUI {
 
         //! --- Folder selection UI ---
         // Create a button at the bottom left corner
-        const bottomLeftButton = document.createElement('button');
-        bottomLeftButton.textContent = 'Select Folder';
-        bottomLeftButton.style.position = 'fixed';
-        bottomLeftButton.style.left = '20px';
-        bottomLeftButton.style.bottom = '100px';
-        bottomLeftButton.style.zIndex = '1000';
-        bottomLeftButton.style.padding = '8px 16px';
-        bottomLeftButton.style.background = '#222';
-        bottomLeftButton.style.color = '#fff';
-        bottomLeftButton.style.border = 'none';
-        bottomLeftButton.style.borderRadius = '4px';
-        bottomLeftButton.style.cursor = 'pointer';
-        bottomLeftButton.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
-        bottomLeftButton.addEventListener('mouseenter', () => {
-            bottomLeftButton.style.background = '#444';
+        const selectFolderButton = document.createElement('button');
+        selectFolderButton.textContent = 'Select Folder';
+        selectFolderButton.style.position = 'fixed';
+        selectFolderButton.style.left = '36px';
+        selectFolderButton.style.bottom = '150px';
+        selectFolderButton.style.zIndex = '1000';
+        selectFolderButton.style.padding = '12px 24px'; // Increased size
+        selectFolderButton.style.fontSize = '1rem'; // Make text bigger
+        selectFolderButton.style.background = '#222';
+        selectFolderButton.style.color = '#fff';
+        selectFolderButton.style.border = 'none';
+        selectFolderButton.style.borderRadius = '6px'; // Slightly more rounded
+        selectFolderButton.style.cursor = 'pointer';
+        selectFolderButton.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+        selectFolderButton.addEventListener('mouseenter', () => {
+            selectFolderButton.style.background = '#444';
         });
-        bottomLeftButton.addEventListener('mouseleave', () => {
-            bottomLeftButton.style.background = '#222';
+        selectFolderButton.addEventListener('mouseleave', () => {
+            selectFolderButton.style.background = '#222';
         });
-        // Example click handler
-        bottomLeftButton.addEventListener('click', () => {
-            console.log('Bottom left button clicked!');
+        document.body.appendChild(selectFolderButton);
+
+        //! Create a "Next" button next to the Select Folder button
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Next File';
+        nextButton.style.position = 'fixed';
+        nextButton.style.left = '155px'; // Adjusted for bigger button width
+        nextButton.style.bottom = '150px';
+        nextButton.style.zIndex = '1000';
+        nextButton.style.padding = '12px 24px'; // Increased size
+        nextButton.style.fontSize = '1rem'; // Make text bigger
+        nextButton.style.background = '#222';
+        nextButton.style.color = '#fff';
+        nextButton.style.border = 'none';
+        nextButton.style.borderRadius = '6px'; // Slightly more rounded
+        nextButton.style.cursor = 'pointer';
+        nextButton.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+        nextButton.addEventListener('mouseenter', () => {
+            nextButton.style.background = '#444';
         });
-        document.body.appendChild(bottomLeftButton);
+        nextButton.addEventListener('mouseleave', () => {
+            nextButton.style.background = '#222';
+        });
+        document.body.appendChild(nextButton);
 
         //! --- Folder selection logic ---
+        let folderFiles: File[] = [];
+        let currentFileIndex = 0;
+
         // 1. Create a hidden file input for folder selection
         const folderInput = document.createElement('input');
         folderInput.type = 'file';
@@ -157,29 +180,51 @@ class EditorUI {
         document.body.appendChild(folderInput);
 
         // 2. When the Select Folder button is clicked, open the folder picker
-        bottomLeftButton.addEventListener('click', () => {
-            folderInput.value = ''; // reset so change always fires
+        selectFolderButton.addEventListener('click', () => {
+            folderInput.value = '';
             folderInput.click();
         });
 
         // 3. Handle folder selection
         folderInput.addEventListener('change', () => {
             const files = Array.from(folderInput.files);
-            const folderFiles = files.filter(file =>
+            folderFiles = files.filter(file =>
                 file.name.toLowerCase().endsWith('.ply') ||
                 file.name.toLowerCase().endsWith('.splat')
             );
+            currentFileIndex = 0;
             console.log('Selected files:', folderFiles);
-            console.log(folderFiles.length);
             if (folderFiles.length > 0) {
-                // Automatically load the first file
-                const file = folderFiles[0];
-                const url = URL.createObjectURL(file);
-                events.invoke('import', url, file.name).finally(() => {
-                    URL.revokeObjectURL(url);
-                });
+                loadCurrentFile();
+                nextButton.disabled = folderFiles.length <= 1;
             } else {
                 alert('No .ply or .splat files found in the selected folder.');
+                nextButton.disabled = true;
+            }
+        });
+
+        function loadCurrentFile() {
+            const file = folderFiles[currentFileIndex];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            events.invoke('scene.clear');
+            events.invoke('import', url, file.name).finally(() => {
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        //! Next button logic
+        nextButton.addEventListener('click', () => {
+            if (currentFileIndex < folderFiles.length - 1) {
+                events.fire('scene.clear');
+                events.fire('camera.reset');
+                events.fire('doc.setName', null);
+                currentFileIndex++;
+                loadCurrentFile();
+                nextButton.disabled = currentFileIndex >= folderFiles.length - 1;
+            } else {
+                alert('No more files in the folder.');
+                nextButton.disabled = true;
             }
         });
         
