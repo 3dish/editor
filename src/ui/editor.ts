@@ -72,6 +72,23 @@ class EditorUI {
             text: `SUPERSPLAT v${version}`
         });
 
+        // INSERT_YOUR_CODE
+
+        // Create a horizontal line in the middle of the screen
+        const horizontalLine = document.createElement('div');
+        horizontalLine.style.position = 'absolute';
+        horizontalLine.style.left = '0';
+        horizontalLine.style.width = '100%';
+        horizontalLine.style.height = '2px';
+        horizontalLine.style.background = 'rgba(0,0,0,0.2)';
+        horizontalLine.style.top = '50%';
+        horizontalLine.style.transform = 'translateY(-1px)';
+        horizontalLine.style.pointerEvents = 'none';
+        horizontalLine.style.zIndex = '10';
+
+        // Add the line to the top container so it overlays the canvas
+        topContainer.dom.appendChild(horizontalLine);
+
         // cursor label
         const cursorLabel = new Label({
             id: 'cursor-label'

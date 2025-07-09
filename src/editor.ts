@@ -1,4 +1,4 @@
-import { Color, Mat4, Texture, Vec3, Vec4 } from 'playcanvas';
+import { Color, Mat4, Texture, Vec3, Vec4, Quat } from 'playcanvas';
 
 import { EditHistory } from './edit-history';
 import { SelectAllOp, SelectNoneOp, SelectInvertOp, SelectOp, HideSelectionOp, UnhideAllOp, DeleteSelectionOp, ResetOp, MultiOp, AddSplatOp } from './edit-ops';
@@ -21,6 +21,18 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         const selected = events.invoke('selection') as Splat;
         return selected?.visible ? [selected] : [];
     };
+
+    
+    
+    //! added for remove rings below y < -0.1
+    function selectRingsByPredicate(predicate: (splat: any, i: number, tempVec: any) => boolean, mode: 'set' | 'add' | 'remove' = 'set') {
+        selectedSplats().forEach((splat: any) => {
+            const tempVec = new Vec3();
+            const filter = (i: number) => predicate(splat, i, tempVec);
+            events.fire('edit.add', new SelectOp(splat, mode, filter));
+        });
+    }
+
 
     let lastExportCursor = 0;
 
@@ -261,6 +273,9 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
                 const { width, height } = scene.targetSize;
 
                 scene.camera.pickPrep(splat, op);
+                // INSERT_YOUR_CODE
+                console.log('hello');
+                console.log(rect.start.x, rect.start.y, rect.end.x, rect.end.y);
                 const pick = scene.camera.pickRect(
                     Math.floor(rect.start.x * width),
                     Math.floor(rect.start.y * height),
@@ -806,6 +821,62 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
         
     });
+
+
+
+
+    //! Remove rings below y < -0.1
+    events.on('rings.removeBelowY', () => {
+        // events.fire('camera.setMode', 'rings');
+        // events.fire('camera.setOverlay', true);
+        // selectRingsByPredicate((splat, i, tempVec) => {
+        //     const rot0 = splat.splatData.getProp('rot_0');
+        //     const rot1 = splat.splatData.getProp('rot_1');
+        //     const rot2 = splat.splatData.getProp('rot_2');
+        //     const rot3 = splat.splatData.getProp('rot_3');
+        //     const sx = splat.splatData.getProp('scale_0');
+        //     const sy = splat.splatData.getProp('scale_1');
+        //     const sz = splat.splatData.getProp('scale_2');
+        //     const q = new Quat();
+        //     const local = new Vec3();
+        //     const world = new Vec3();
+        //     if (splat.calcSplatWorldPosition(i, tempVec)) {
+        //         q.set(rot0[i], rot1[i], rot2[i], rot3[i]);
+        //         let minY = tempVec.y;
+        //         // Sample 8 directions around the ellipse
+        //         for (let d = 0; d < 32; ++d) {
+        //             const theta = (Math.PI * 2 * d) / 8;
+        //             local.set(
+        //                 Math.cos(theta) * Math.exp(sx[i]),
+        //                 -Math.exp(sy[i]),
+        //                 Math.sin(theta) * Math.exp(sz[i])
+        //             );
+        //             q.transformVector(local, world);
+        //             minY = Math.min(minY, tempVec.y + world.y);
+        //         }
+        //         return minY < 0;
+        //     }
+        //     return false;
+        // }, 'set');
+        selectedSplats().forEach((splat) => {
+            scene.camera.pickPrep(splat, 'set');
+            const { width, height } = scene.targetSize;
+            const pick = scene.camera.pickRect(
+                Math.floor(0 * width),
+                Math.floor(0.5 * height),
+                Math.floor((1 - 0) * width),
+                Math.floor((1 - 0.5) * height)
+            );
+
+            const selected = new Set<number>(pick);
+            const filter = (i: number) => {
+                return selected.has(i);
+            };
+
+            events.fire('edit.add', new SelectOp(splat, 'set', filter));
+        });
+    });
+    
     
 };
 

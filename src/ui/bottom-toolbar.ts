@@ -240,6 +240,18 @@ class BottomToolbar extends Container {
             events.fire('splats.selectBelowXZ');
         });
 
+        //! Remove Rings Below Y Button
+        const removeRingsBelowYButton = new Button({
+            id: 'bottom-toolbar-remove-rings-below-y',
+            class: 'bottom-toolbar-button',
+            text: 'Rings'
+        });
+        removeRingsBelowYButton.dom.classList.add('toolbar-remove-btn');
+        this.append(removeRingsBelowYButton);
+        tooltips.register(removeRingsBelowYButton, 'Remove all rings below a certain Y value');
+        removeRingsBelowYButton.on('click', () => {
+            events.fire('rings.removeBelowY');
+        });
 
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));
         redo.dom.addEventListener('click', () => events.fire('edit.redo'));
@@ -309,7 +321,8 @@ class BottomToolbar extends Container {
             customCamera1Button,
             customCamera2Button,
             customCamera3Button,
-            removeBelowXZButton
+            removeBelowXZButton,
+            removeRingsBelowYButton
         ];
         // Add always-visible class for CSS
         for (const btn of this.alwaysVisibleButtons) {
