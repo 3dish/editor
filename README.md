@@ -47,6 +47,11 @@ Files changed:
 `src/ui/sphere-shape.ts`
 `src/tools/sphere-selection.ts`
 
+## Brightness and Blackpoint set to 0 if splat file imported
+
+Files changed:
+`src/file-handler.ts`
+
 
 
 ## Local Development
