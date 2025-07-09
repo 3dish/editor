@@ -146,6 +146,18 @@ const initFileHandler = (scene: Scene, events: Events, dropTarget: HTMLElement, 
             } else if (lowerFilename.endsWith('.ply') || lowerFilename.endsWith('.splat') || (lowerFilename === 'meta.json')) {
                 const model = await scene.assetLoader.loadModel({ url, filename, animationFrame });
                 scene.add(model);
+
+                //! Set brightness and blackPoint to 0 for splat file type
+                if (lowerFilename.endsWith('.splat')) {
+                    model._brightness = 0;
+                    model._blackPoint = 0;
+                    events.fire('selection.changed', model);
+                } else if (lowerFilename.endsWith('.ply')) {
+                    model._brightness = 0.1;
+                    model._blackPoint = 0.1; 
+                    events.fire('selection.changed', model);
+                }
+
                 return model;
             } else if (lowerFilename.endsWith('.json')) {
                 await loadCameraPoses(url, filename, events);
