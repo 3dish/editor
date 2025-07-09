@@ -1,4 +1,4 @@
-import { Container, Label } from 'pcui';
+import { Container, Label, Button } from 'pcui';  //! Added for File Selector feature
 import { Mat4, Vec3 } from 'playcanvas';
 
 import { DataPanel } from './data-panel';
@@ -121,140 +121,70 @@ class EditorUI {
         const modeToggle = new ModeToggle(events, tooltips);
         const menu = new Menu(events);
 
-        //! Folder selection UI (bottom left, above bottom toolbar)
-        const folderSelectContainer = new Container({
-            id: 'folder-select-container',
-            class: 'folder-select-container'
+        //! --- Folder selection UI ---
+        // Create a button at the bottom left corner
+        const bottomLeftButton = document.createElement('button');
+        bottomLeftButton.textContent = 'Select Folder';
+        bottomLeftButton.style.position = 'fixed';
+        bottomLeftButton.style.left = '20px';
+        bottomLeftButton.style.bottom = '100px';
+        bottomLeftButton.style.zIndex = '1000';
+        bottomLeftButton.style.padding = '8px 16px';
+        bottomLeftButton.style.background = '#222';
+        bottomLeftButton.style.color = '#fff';
+        bottomLeftButton.style.border = 'none';
+        bottomLeftButton.style.borderRadius = '4px';
+        bottomLeftButton.style.cursor = 'pointer';
+        bottomLeftButton.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+        bottomLeftButton.addEventListener('mouseenter', () => {
+            bottomLeftButton.style.background = '#444';
         });
-        Object.assign(folderSelectContainer.dom.style, {
-            position: 'absolute',
-            left: '10px',
-            bottom: '100px', 
-            zIndex: 10,
-            background: 'rgba(30,30,30,0.95)',
-            borderRadius: '6px',
-            padding: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+        bottomLeftButton.addEventListener('mouseleave', () => {
+            bottomLeftButton.style.background = '#222';
         });
-        // File counter label (hidden/placeholder by default)
-        const fileCounterLabel = new Label({
-            text: '--/--',
-            class: 'folder-file-counter-label'
+        // Example click handler
+        bottomLeftButton.addEventListener('click', () => {
+            console.log('Bottom left button clicked!');
         });
-        Object.assign(fileCounterLabel.dom.style, {
-            display: 'block',
-            color: '#ffd700',
-            fontWeight: 'bold',
-            fontSize: '12px',
-            marginBottom: '8px',
-            textAlign: 'center',
-            letterSpacing: '1px',
-            minWidth: '48px'
-        });
-        folderSelectContainer.append(fileCounterLabel);
-        const folderSelectButton = new Label({
-            text: '📁 Select Folder',
-            class: 'folder-select-button'
-        });
-        Object.assign(folderSelectButton.dom.style, {
-            cursor: 'pointer',
-            color: '#fff',
-            fontWeight: '600',
-            fontSize: '12px',
-            padding: '6px 12px',
-            borderRadius: '4px',
-            background: 'linear-gradient(90deg, #444 0%, #222 100%)',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.15)'
-        });
-        folderSelectContainer.append(folderSelectButton);
-        // Next File button
-        const nextFileButton = new Label({
-            text: 'Next File',
-            class: 'folder-next-file-button'
-        });
-        Object.assign(nextFileButton.dom.style, {
-            cursor: 'pointer',
-            color: '#fff',
-            fontWeight: '600',
-            fontSize: '12px',
-            padding: '6px 12px',
-            borderRadius: '4px',
-            background: 'linear-gradient(90deg, #555 0%, #222 100%)', // neutral gray gradient
-            boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
-            display: 'inline-block',
-            marginLeft: '8px'
-        });
-        // Button row container
-        const buttonRow = document.createElement('div');
-        buttonRow.style.display = 'flex';
-        buttonRow.style.flexDirection = 'row';
-        buttonRow.style.justifyContent = 'center';
-        buttonRow.style.gap = '0px';
-        buttonRow.appendChild(folderSelectButton.dom);
-        buttonRow.appendChild(nextFileButton.dom);
-        // Remove folderSelectButton from folderSelectContainer if already appended
-        if (folderSelectButton.dom.parentElement === folderSelectContainer.dom) {
-            folderSelectContainer.dom.removeChild(folderSelectButton.dom);
-        }
-        folderSelectContainer.dom.appendChild(buttonRow);
-        // Info row: file counter (left) and filename (right)
-        const filenameLabel = new Label({
-            text: 'filename', // Placeholder for filename
-            class: 'folder-filename-label'
-        });
-        Object.assign(filenameLabel.dom.style, {
-            display: 'block',
-            color: '#b0e0ff',
-            fontWeight: '500',
-            fontSize: '12px',
-            textAlign: 'right',
-            letterSpacing: '0.5px',
-            minWidth: '80px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            maxWidth: '120px'
-        });
-        // Info row container
-        const infoRow = document.createElement('div');
-        infoRow.style.display = 'flex';
-        infoRow.style.flexDirection = 'row';
-        infoRow.style.justifyContent = 'space-between';
-        infoRow.style.alignItems = 'center';
-        infoRow.style.marginBottom = '8px';
-        infoRow.appendChild(fileCounterLabel.dom);
-        infoRow.appendChild(filenameLabel.dom);
-        // Remove fileCounterLabel from folderSelectContainer if already appended
-        if (fileCounterLabel.dom.parentElement === folderSelectContainer.dom) {
-            folderSelectContainer.dom.removeChild(fileCounterLabel.dom);
-        }
-        folderSelectContainer.dom.insertBefore(infoRow, folderSelectContainer.dom.firstChild);
+        document.body.appendChild(bottomLeftButton);
 
-        // Folder path box (below the main UI box)
-        const folderPathLabel = new Label({
-            text: 'C:/path/to/folder', // Placeholder for folder path
-            class: 'folder-path-label'
-        });
-        Object.assign(folderPathLabel.dom.style, {
-            display: 'block',
-            color: '#bbb',
-            background: 'rgba(40,40,40,0.95)',
-            fontSize: '11px',
-            fontWeight: '400',
-            borderRadius: '4px',
-            padding: '4px 8px',
-            marginTop: '10px',
-            maxWidth: '220px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            border: '1px solid #333',
-            boxSizing: 'border-box'
-        });
-        folderSelectContainer.append(folderPathLabel);
-        //! Folder selection UI ends here
+        //! --- Folder selection logic ---
+        // 1. Create a hidden file input for folder selection
+        const folderInput = document.createElement('input');
+        folderInput.type = 'file';
+        folderInput.webkitdirectory = true;
+        folderInput.style.display = 'none';
+        document.body.appendChild(folderInput);
 
+        // 2. When the Select Folder button is clicked, open the folder picker
+        bottomLeftButton.addEventListener('click', () => {
+            folderInput.value = ''; // reset so change always fires
+            folderInput.click();
+        });
+
+        // 3. Handle folder selection
+        folderInput.addEventListener('change', () => {
+            const files = Array.from(folderInput.files);
+            const folderFiles = files.filter(file =>
+                file.name.toLowerCase().endsWith('.ply') ||
+                file.name.toLowerCase().endsWith('.splat')
+            );
+            console.log('Selected files:', folderFiles);
+            console.log(folderFiles.length);
+            if (folderFiles.length > 0) {
+                // Automatically load the first file
+                const file = folderFiles[0];
+                const url = URL.createObjectURL(file);
+                events.invoke('import', url, file.name).finally(() => {
+                    URL.revokeObjectURL(url);
+                });
+            } else {
+                alert('No .ply or .splat files found in the selected folder.');
+            }
+        });
         
+
+
         canvasContainer.dom.appendChild(canvas);
         canvasContainer.append(appLabel);
         canvasContainer.append(cursorLabel);
@@ -266,7 +196,6 @@ class EditorUI {
         canvasContainer.append(rightToolbar);
         canvasContainer.append(modeToggle);
         canvasContainer.append(menu);
-        canvasContainer.append(folderSelectContainer); //! <-- Ensure this is appended to the UI
 
         // view axes container
         const viewCube = new ViewCube(events);

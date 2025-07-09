@@ -52,6 +52,12 @@ Files changed:
 Files changed:
 `src/file-handler.ts`
 
+## Folder Path Feature
+
+Files Changed:
+`src/ui/editor.ts`
+
+
 
 
 ## Local Development
