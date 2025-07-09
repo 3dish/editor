@@ -69,7 +69,7 @@ class BottomToolbar extends Container {
 
         const sphere = new Button({
             id: 'bottom-toolbar-sphere',
-            class: 'bottom-toolbar-tool'
+            class: 'bottom-toolbar-button'
         });
 
         const box = new Button({
@@ -147,9 +147,7 @@ class BottomToolbar extends Container {
         this.append(polygon);
         this.append(brush);
         this.append(new Element({ class: 'bottom-toolbar-separator' }));
-        this.append(sphere);
         this.append(box);
-        // this.append(crop);
         this.append(new Element({ class: 'bottom-toolbar-separator' }));
         this.append(translate);
         this.append(rotate);
@@ -157,8 +155,9 @@ class BottomToolbar extends Container {
         this.append(coordSpace);
         this.append(origin);
 
+        // Move sphere button here, just before Center1
+        this.append(sphere);
 
-        
         //! First Center button
         const centerFitButton = new Button({
             id: 'bottom-toolbar-center-fit',
@@ -304,6 +303,7 @@ class BottomToolbar extends Container {
         //! Store always-visible buttons for collapse logic
         this.alwaysVisibleButtons = [
             this.collapseButton,
+            sphere,
             centerFitButton,
             centerFitButton2,
             customCamera1Button,
