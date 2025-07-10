@@ -127,7 +127,7 @@ class EditorUI {
         selectFolderButton.textContent = 'Select Folder';
         selectFolderButton.style.position = 'fixed';
         selectFolderButton.style.left = '36px';
-        selectFolderButton.style.bottom = '150px';
+        selectFolderButton.style.bottom = '189px';
         selectFolderButton.style.zIndex = '1000';
         selectFolderButton.style.padding = '12px 24px'; // Increased size
         selectFolderButton.style.fontSize = '1rem'; // Make text bigger
@@ -145,12 +145,13 @@ class EditorUI {
         });
         document.body.appendChild(selectFolderButton);
 
+
         //! Create a "Next" button next to the Select Folder button
         const nextButton = document.createElement('button');
         nextButton.textContent = 'Next File';
         nextButton.style.position = 'fixed';
         nextButton.style.left = '155px'; // Adjusted for bigger button width
-        nextButton.style.bottom = '150px';
+        nextButton.style.bottom = '189px';
         nextButton.style.zIndex = '1000';
         nextButton.style.padding = '12px 24px'; // Increased size
         nextButton.style.fontSize = '1rem'; // Make text bigger
@@ -167,6 +168,37 @@ class EditorUI {
             nextButton.style.background = '#222';
         });
         document.body.appendChild(nextButton);
+
+        //! --- File counter display box UI ---
+        const fileCounterBox = document.createElement('div');
+        fileCounterBox.style.position = 'fixed';
+        fileCounterBox.style.left = '36px';
+        fileCounterBox.style.bottom = '140px'; // Above the buttons
+        fileCounterBox.style.zIndex = '1000';
+        fileCounterBox.style.width = '215px'; // Fixed width matching both buttons
+        fileCounterBox.style.height = '48px'; // Increased height
+        fileCounterBox.style.display = 'flex';
+        fileCounterBox.style.alignItems = 'center';
+        fileCounterBox.style.justifyContent = 'center';
+        fileCounterBox.style.padding = '0'; // Remove vertical padding since height is fixed
+        fileCounterBox.style.background = '#333';
+        fileCounterBox.style.color = '#fff';
+        fileCounterBox.style.borderRadius = '6px';
+        fileCounterBox.style.fontSize = '1.3rem';
+        fileCounterBox.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+        fileCounterBox.style.textAlign = 'center';
+        fileCounterBox.textContent = 'No file selected';
+        document.body.appendChild(fileCounterBox);
+
+        // --- File counter display update function ---
+        function updateFileCounter() {
+            if (folderFiles.length > 0) {
+                const file = folderFiles[currentFileIndex];
+                fileCounterBox.innerHTML = `<span style="font-size:1.3rem;">${currentFileIndex + 1}/${folderFiles.length}</span><span style="margin-left: 70px; font-size:1.3rem;">${file ? file.name : ''}</span>`;
+            } else {
+                fileCounterBox.textContent = 'No file selected';
+            }
+        }
 
         //! --- Folder selection logic ---
         let folderFiles: File[] = [];
@@ -201,6 +233,7 @@ class EditorUI {
                 alert('No .ply or .splat files found in the selected folder.');
                 nextButton.disabled = true;
             }
+            updateFileCounter();
         });
 
         function loadCurrentFile() {
@@ -211,6 +244,7 @@ class EditorUI {
             events.invoke('import', url, file.name).finally(() => {
                 URL.revokeObjectURL(url);
             });
+            updateFileCounter();
         }
 
         //! Next button logic
@@ -226,6 +260,7 @@ class EditorUI {
                 alert('No more files in the folder.');
                 nextButton.disabled = true;
             }
+            updateFileCounter();
         });
         
 
