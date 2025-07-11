@@ -225,7 +225,12 @@ class Scene {
         const splats = this.getElementsByType(ElementType.splat);
         splats.forEach((splat) => {
             this.remove(splat);
-            (splat as Splat).destroy();
+            try{
+                (splat as Splat).destroy();
+            }catch{
+                console.log("Error deleting")
+            }
+                
         });
     }
 
