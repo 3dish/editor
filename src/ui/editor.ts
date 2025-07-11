@@ -190,6 +190,26 @@ class EditorUI {
         fileCounterBox.textContent = 'No file selected';
         document.body.appendChild(fileCounterBox);
 
+        //! --- Folder path display box UI ---
+        const folderPathBox = document.createElement('div');
+        folderPathBox.style.position = 'fixed';
+        folderPathBox.style.left = '36px';
+        folderPathBox.style.bottom = '114px'; 
+        folderPathBox.style.zIndex = '1000';
+        folderPathBox.style.width = '215px';
+        folderPathBox.style.height = '25px';
+        folderPathBox.style.display = 'flex';
+        folderPathBox.style.alignItems = 'center';
+        folderPathBox.style.justifyContent = 'center';
+        folderPathBox.style.background = '#222';
+        folderPathBox.style.color = '#fff';
+        folderPathBox.style.borderRadius = '6px';
+        folderPathBox.style.fontSize = '.8rem';
+        folderPathBox.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)';
+        folderPathBox.style.textAlign = 'center';
+        folderPathBox.textContent = '';
+        document.body.appendChild(folderPathBox);
+
         // --- File counter display update function ---
         function updateFileCounter() {
             if (folderFiles.length > 0) {
@@ -229,21 +249,58 @@ class EditorUI {
             if (folderFiles.length > 0) {
                 loadCurrentFile();
                 nextButton.disabled = folderFiles.length <= 1;
+                // Set folder path display
+                const firstFile = folderFiles[0];
+                if (firstFile && firstFile.webkitRelativePath) {
+                    const pathParts = firstFile.webkitRelativePath.split('/');
+                    pathParts.pop(); // Remove the file name
+                    folderPathBox.textContent = pathParts.join('/');
+                } else {
+                    folderPathBox.textContent = '';
+                }
             } else {
                 alert('No .ply or .splat files found in the selected folder.');
                 nextButton.disabled = true;
+                folderPathBox.textContent = '';
             }
             updateFileCounter();
         });
 
-        function loadCurrentFile() {
+
+        async function loadCurrentFile() {
+            // 2. Now import the user-selected file (if any)
             const file = folderFiles[currentFileIndex];
             if (!file) return;
             const url = URL.createObjectURL(file);
-            events.invoke('scene.clear');
-            events.invoke('import', url, file.name).finally(() => {
-                URL.revokeObjectURL(url);
-            });
+            await events.invoke('import', url, file.name);
+            URL.revokeObjectURL(url);
+            // 1. Import Wood.splat first
+            const woodSplatPath = '/static/images/Wood.splat'; // Use the correct path!
+            try {
+                const response = await fetch(woodSplatPath);
+                if (!response.ok) throw new Error('Default splat file not found');
+                const blob = await response.blob();
+                const woodFile = new File([blob], 'Wood.splat');
+                const woodUrl = URL.createObjectURL(woodFile);
+                events.invoke('scene.clear');
+                // If events.invoke('import', ...) returns a promise, await it:
+                await events.invoke('import', woodUrl, woodFile.name);
+                URL.revokeObjectURL(woodUrl);
+        
+                // Center after Wood.splat is loadeds
+                events.fire('centerFit.selectedSplat');
+
+                const splats = await events.invoke('scene.splats');
+                const woodSplat = splats.find(s => s.name === 'Wood.splat');
+                if (woodSplat) {
+                    woodSplat.visible = false;
+                }
+                
+            } catch (err) {
+                console.warn('Could not load default splat file:', err);
+            }
+        
+        
             updateFileCounter();
         }
 
@@ -262,6 +319,8 @@ class EditorUI {
             }
             updateFileCounter();
         });
+
+
         
 
 
@@ -429,6 +488,8 @@ class EditorUI {
                 document.body.focus();
             }
         }, true);
+
+        
     }
 }
 
