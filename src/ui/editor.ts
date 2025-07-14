@@ -295,7 +295,12 @@ class EditorUI {
                 if (woodSplat) {
                     woodSplat.visible = false;
                 }
-                
+
+                const userSplat = splats.find(s => s.name === file.name);
+                if (userSplat) {
+                    events.fire('selection', userSplat);
+                }
+                                
             } catch (err) {
                 console.warn('Could not load default splat file:', err);
             }
