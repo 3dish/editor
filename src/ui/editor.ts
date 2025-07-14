@@ -190,6 +190,79 @@ class EditorUI {
         fileCounterBox.textContent = 'No file selected';
         document.body.appendChild(fileCounterBox);
 
+        //! --- File search input and Go button ---
+        const fileSearchContainer = document.createElement('div');
+        fileSearchContainer.style.position = 'fixed';
+        fileSearchContainer.style.left = '36px';
+        fileSearchContainer.style.bottom = '84px'; // Below the file counter
+        fileSearchContainer.style.zIndex = '1000';
+        fileSearchContainer.style.display = 'flex';
+        fileSearchContainer.style.flexDirection = 'row';
+        fileSearchContainer.style.alignItems = 'center';
+        fileSearchContainer.style.background = '#222';
+        fileSearchContainer.style.borderRadius = '6px';
+        fileSearchContainer.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)';
+        fileSearchContainer.style.padding = '3px 5px';
+        // Remove fixed width: fileSearchContainer.style.width = '120px';
+
+        const fileSearchInput = document.createElement('input');
+        fileSearchInput.type = 'text';
+        fileSearchInput.placeholder = 'Jump to file...';
+        fileSearchInput.style.height = '23px';
+        fileSearchInput.style.width = '75px';
+        fileSearchInput.style.fontSize = '.85rem';
+        fileSearchInput.style.border = 'none';
+        fileSearchInput.style.borderRadius = '4px';
+        fileSearchInput.style.marginRight = '4px';
+        fileSearchInput.style.padding = '0 4px';
+        fileSearchInput.style.background = '#444';
+        fileSearchInput.style.color = '#fff';
+        fileSearchInput.style.outline = 'none';
+
+        const fileSearchButton = document.createElement('button');
+        fileSearchButton.textContent = 'Go';
+        fileSearchButton.style.height = '23px';
+        fileSearchButton.style.fontSize = '.85rem';
+        fileSearchButton.style.background = '#222';
+        fileSearchButton.style.color = '#fff';
+        fileSearchButton.style.border = 'none';
+        fileSearchButton.style.borderRadius = '4px';
+        fileSearchButton.style.cursor = 'pointer';
+        fileSearchButton.style.boxShadow = '0 2px 8px rgba(0,0,0,0.10)';
+        fileSearchButton.style.width = 'auto';
+        fileSearchButton.style.padding = '0 3px';
+        fileSearchButton.style.marginLeft = '0';
+
+        fileSearchContainer.appendChild(fileSearchInput);
+        fileSearchContainer.appendChild(fileSearchButton);
+        document.body.appendChild(fileSearchContainer);
+
+        function jumpToFileByName(name: string) {
+            if (!folderFiles.length) return;
+            const search = name.trim().toLowerCase();
+            if (!search) return;
+            const idx = folderFiles.findIndex(f => f.name.toLowerCase().includes(search));
+            if (idx !== -1) {
+                currentFileIndex = idx;
+                events.fire('scene.clear');
+                events.fire('camera.reset');
+                events.fire('doc.setName', null);
+                loadCurrentFile();
+                updateFileCounter();
+            } else {
+                alert('File not found: ' + name);
+            }
+        }
+
+        fileSearchButton.addEventListener('click', () => {
+            jumpToFileByName(fileSearchInput.value);
+        });
+        fileSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                jumpToFileByName(fileSearchInput.value);
+            }
+        });
+
         //! --- Folder path display box UI ---
         const folderPathBox = document.createElement('div');
         folderPathBox.style.position = 'fixed';
