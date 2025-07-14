@@ -509,6 +509,7 @@ class EditorUI {
             const imageSettings = await imageSettingsDialog.show(initial);
 
             if (imageSettings) {
+                events.fire('tool.deactivate');
                 await events.invoke('render.image', imageSettings);
             }
         });
