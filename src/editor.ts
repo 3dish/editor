@@ -280,7 +280,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
     let maskTexture: Texture = null;
 
-    events.on('select.byMask', (op: 'add'|'remove'|'set', canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
+    events.on('select.byMask', (op: any, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
         const mode = events.invoke('camera.mode');
 
         selectedSplats().forEach((splat) => {
@@ -342,7 +342,12 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
                     return selected.has(i);
                 };
 
-                events.fire('edit.add', new SelectOp(splat, op, filter));
+                //! inverse selection feature added (alt+brush)
+                if (op === 'inverse') {
+                    events.fire('edit.add', new SelectOp(splat, 'inverse', filter));
+                } else {
+                    events.fire('edit.add', new SelectOp(splat, op as any, filter));
+                }
             }
         });
     });
