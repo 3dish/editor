@@ -57,6 +57,15 @@ Files changed:
 Files Changed:
 `src/ui/editor.ts`
 
+## Inverse Brush/Rectangle Selection
+
+Alt+brush/rect now selects/highlights the region not brushed
+
+Files changed:
+`src/edit-ops.ts`
+`src/editor.ts`
+`src/tools/brush-selection.ts`
+`src/tools/rect-selection.ts`
 
 
 
