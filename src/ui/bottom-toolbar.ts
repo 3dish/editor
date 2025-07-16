@@ -158,6 +158,17 @@ class BottomToolbar extends Container {
         // Move sphere button here, just before Center1
         this.append(sphere);
 
+        //! Add Small Sphere button UI
+        const smallSphere = new Button({
+            id: 'bottom-toolbar-small-sphere',
+            class: 'bottom-toolbar-button',
+            text: 'Sphere'
+        });
+        smallSphere.dom.appendChild(createSvg(sphereSvg)); // Use the same icon for now
+        this.append(smallSphere);
+        tooltips.register(smallSphere, 'Small Sphere Select');
+        smallSphere.dom.addEventListener('click', () => events.fire('tool.smallSphereSelection'));
+
         //! First Center button
         const centerFitButton = new Button({
             id: 'bottom-toolbar-center-fit',
@@ -240,6 +251,21 @@ class BottomToolbar extends Container {
             events.fire('splats.selectBelowXZ');
         });
 
+        // //! Rings Button to remove rings below certain y value
+        // const ringsButton = new Button({
+        //     id: 'bottom-toolbar-rings',
+        //     class: 'bottom-toolbar-button',
+        //     text: 'Rings'
+        // });
+        // ringsButton.dom.classList.add('toolbar-rings-btn');
+        // this.append(ringsButton);
+        // tooltips.register(ringsButton, 'Show/Hide Rings');
+        // ringsButton.on('click', () => {
+        //     events.fire('select.rect', 'set', {
+        //         start: { x: 0.1, y: 0.1 },
+        //         end: { x: 0.5, y: 0.5 }
+        //     });
+        // });
 
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));
         redo.dom.addEventListener('click', () => events.fire('edit.redo'));
@@ -304,6 +330,7 @@ class BottomToolbar extends Container {
         this.alwaysVisibleButtons = [
             this.collapseButton,
             sphere,
+            smallSphere,
             centerFitButton,
             centerFitButton2,
             customCamera1Button,

@@ -235,6 +235,7 @@ const main = async () => {
     toolManager.register('polygonSelection', new PolygonSelection(events, editorUI.toolsContainer.dom, mask));
     toolManager.register('lassoSelection', new LassoSelection(events, editorUI.toolsContainer.dom, mask));
     toolManager.register('sphereSelection', new SphereSelection(events, scene, editorUI.canvasContainer));
+    toolManager.register('smallSphereSelection', new SphereSelection(events, scene, editorUI.canvasContainer, 0.55, { x: 0, y: 0.099, z: 0 }));
     toolManager.register('boxSelection', new BoxSelection(events, scene, editorUI.canvasContainer));
     toolManager.register('move', new MoveTool(events, scene));
     toolManager.register('rotate', new RotateTool(events, scene));

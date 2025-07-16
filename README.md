@@ -67,6 +67,15 @@ Files changed:
 `src/tools/brush-selection.ts`
 `src/tools/rect-selection.ts`
 
+## Small Sphere button added to remove clouds
+
+Files Changes:
+`src/main.ts`
+`src/sphere-shape.ts`
+`src/tools/sphere-selection.ts`
+`src/ui/bottom-toolbar.ts`
+`src/ui/editor.ts`
+
 
 
 ## Local Development

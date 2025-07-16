@@ -247,8 +247,13 @@ class EditorUI {
                 events.fire('scene.clear');
                 events.fire('camera.reset');
                 events.fire('doc.setName', null);
-                loadCurrentFile();
-                updateFileCounter();
+                loadCurrentFile().then(() => {
+                    updateFileCounter();
+                    setTimeout(() => {
+                        events.fire('tool.smallSphereSelection');
+                        events.fire('tool.deactivate');
+                    }, 1300);
+                });
             } else {
                 alert('File not found: ' + name);
             }
@@ -320,8 +325,15 @@ class EditorUI {
             currentFileIndex = 0;
             console.log('Selected files:', folderFiles);
             if (folderFiles.length > 0) {
-                loadCurrentFile();
-                nextButton.disabled = folderFiles.length <= 1;
+                loadCurrentFile().then(() => {
+                    nextButton.disabled = folderFiles.length <= 1;
+                    updateFileCounter();
+                    setTimeout(() => {
+                        events.fire('tool.smallSphereSelection');
+                        events.fire('tool.deactivate');
+                    }, 1300);
+                });
+                //nextButton.disabled = folderFiles.length <= 1;
                 // Set folder path display
                 const firstFile = folderFiles[0];
                 if (firstFile && firstFile.webkitRelativePath) {
@@ -389,13 +401,20 @@ class EditorUI {
                 events.fire('camera.reset');
                 events.fire('doc.setName', null);
                 currentFileIndex++;
-                loadCurrentFile();
-                nextButton.disabled = currentFileIndex >= folderFiles.length - 1;
+                loadCurrentFile().then(() => {
+                    updateFileCounter();
+                    setTimeout(() => {
+                        events.fire('tool.smallSphereSelection');
+                        events.fire('tool.deactivate');
+                    }, 1300);
+                    nextButton.disabled = currentFileIndex >= folderFiles.length - 1;
+                });
             } else {
                 alert('No more files in the folder.');
                 nextButton.disabled = true;
+                updateFileCounter();
             }
-            updateFileCounter();
+            events.fire('tool.deactivate');
         });
 
 

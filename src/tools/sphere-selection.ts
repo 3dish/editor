@@ -12,8 +12,11 @@ class SphereSelection {
 
     active = false;
 
-    constructor(events: Events, scene: Scene, canvasContainer: Container) {
+    constructor(events: Events, scene: Scene, canvasContainer: Container, initialRadius?: number, initialPosition?: { x: number, y: number, z: number }) {
         const sphere = new SphereShape();
+        if (initialRadius !== undefined) {
+            sphere.radius = initialRadius;
+        }
 
         const gizmo = new TranslateGizmo(scene.camera.entity.camera, scene.gizmoLayer);
 
@@ -92,7 +95,8 @@ class SphereSelection {
 
         this.activate = () => {
             this.active = true;
-            sphere.pivot.setPosition(0, 1.83, 0);            //! pivot of sphere inialized to 0,0,0
+            const pos = initialPosition || { x: 0, y: 1.83, z: 0 };
+            sphere.pivot.setPosition(pos.x, pos.y, pos.z);
             scene.add(sphere);
             gizmo.attach([sphere.pivot]);
             selectToolbar.hidden = false;
