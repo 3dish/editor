@@ -82,17 +82,35 @@ class RectSelection {
 
                 if (dragMoved) {
                     // rect select
+                    let op = 'set';
+                    if (e.shiftKey) {
+                        op = 'add';
+                    } else if (e.ctrlKey) {
+                        op = 'remove';
+                    } else if (e.altKey) {
+                        op = 'inverse';
+                    }
                     events.fire(
                         'select.rect',
-                        e.shiftKey ? 'add' : (e.ctrlKey ? 'remove' : 'set'), {
+                        op,
+                        {
                             start: { x: Math.min(start.x, end.x) / w, y: Math.min(start.y, end.y) / h },
                             end: { x: Math.max(start.x, end.x) / w, y: Math.max(start.y, end.y) / h }
-                        });
+                        }
+                    );
                 } else {
                     // pick
+                    let op = 'set';
+                    if (e.shiftKey) {
+                        op = 'add';
+                    } else if (e.ctrlKey) {
+                        op = 'remove';
+                    } else if (e.altKey) {
+                        op = 'inverse';
+                    }
                     events.fire(
                         'select.point',
-                        e.shiftKey ? 'add' : (e.ctrlKey ? 'remove' : 'set'),
+                        op,
                         { x: e.offsetX / parent.clientWidth, y: e.offsetY / parent.clientHeight }
                     );
                 }

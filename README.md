@@ -57,6 +57,24 @@ Files changed:
 Files Changed:
 `src/ui/editor.ts`
 
+## Inverse Brush/Rectangle Selection
+
+Alt+brush/rect now selects/highlights the region not brushed
+
+Files changed:
+`src/edit-ops.ts`
+`src/editor.ts`
+`src/tools/brush-selection.ts`
+`src/tools/rect-selection.ts`
+
+## Small Sphere button added to remove clouds
+
+Files Changes:
+`src/main.ts`
+`src/sphere-shape.ts`
+`src/tools/sphere-selection.ts`
+`src/ui/bottom-toolbar.ts`
+`src/ui/editor.ts`
 
 
 

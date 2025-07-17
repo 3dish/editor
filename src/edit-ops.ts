@@ -117,25 +117,29 @@ class SelectInvertOp extends StateOp {
 }
 
 class SelectOp extends StateOp {
-    name = 'selectOp';
+    name = 'select';
 
-    constructor(splat: Splat, op: 'add'|'remove'|'set', filter: (i: number) => boolean) {
+    //! inverse selection feature added (alt+brush)
+    constructor(splat: Splat, op: 'add'|'remove'|'set'|'inverse', filter: (i: number) => boolean) {
         const filterFunc = {
             add: (state: number, index: number) => (state === 0) && filter(index),
             remove: (state: number, index: number) => (state === State.selected) && filter(index),
-            set: (state: number, index: number) => (state === State.selected) !== filter(index)
+            set: (state: number, index: number) => (state === State.selected) !== filter(index),
+            inverse: (state: number, index: number) => (state & (State.hidden | State.deleted)) === 0 && !filter(index)
         };
 
         const doIt = {
             add: (state: number) => state | State.selected,
             remove: (state: number) => state & (~State.selected),
-            set: (state: number) => state ^ State.selected
+            set: (state: number) => state ^ State.selected,
+            inverse: (state: number) => state | State.selected
         };
 
         const undoIt = {
             add: (state: number) => state & (~State.selected),
             remove: (state: number) => state | State.selected,
-            set: (state: number) => state ^ State.selected
+            set: (state: number) => state ^ State.selected,
+            inverse: (state: number) => state & (~State.selected)
         };
 
         super(splat, filterFunc[op], doIt[op], undoIt[op]);

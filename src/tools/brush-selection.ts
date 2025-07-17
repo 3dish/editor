@@ -95,12 +95,23 @@ class BrushSelection {
 
                 dragEnd();
 
-                events.fire(
-                    'select.byMask',
-                    e.shiftKey ? 'add' : (e.ctrlKey ? 'remove' : 'set'),
-                    canvas,
-                    context
-                );
+                //! inverse selection added (alt+brush)
+                if (e.altKey) {
+                    events.fire('select.byMask', 'inverse', canvas, context);
+                } else {
+                    let mode = 'set';
+                    if (e.shiftKey) {
+                        mode = 'add';
+                    } else if (e.ctrlKey) {
+                        mode = 'remove';
+                    }
+                    events.fire(
+                        'select.byMask',
+                        mode,
+                        canvas,
+                        context
+                    );
+                }
             }
         };
 
