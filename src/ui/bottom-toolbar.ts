@@ -69,7 +69,8 @@ class BottomToolbar extends Container {
 
         const sphere = new Button({
             id: 'bottom-toolbar-sphere',
-            class: 'bottom-toolbar-button'
+            class: 'bottom-toolbar-button',
+            text: 'Sphere1'
         });
 
         const box = new Button({
@@ -134,7 +135,7 @@ class BottomToolbar extends Container {
         picker.dom.appendChild(createSvg(pickerSvg));
         polygon.dom.appendChild(createSvg(polygonSvg));
         brush.dom.appendChild(createSvg(brushSvg));
-        sphere.dom.appendChild(createSvg(sphereSvg));
+        // sphere.dom.appendChild(createSvg(sphereSvg)); // Removed icon
         box.dom.appendChild(createSvg(boxSvg));
         lasso.dom.appendChild(createSvg(lassoSvg));
         // crop.dom.appendChild(createSvg(cropSvg));
@@ -162,9 +163,9 @@ class BottomToolbar extends Container {
         const smallSphere = new Button({
             id: 'bottom-toolbar-small-sphere',
             class: 'bottom-toolbar-button',
-            text: 'Sphere'
+            text: 'Sphere2'
         });
-        smallSphere.dom.appendChild(createSvg(sphereSvg)); // Use the same icon for now
+        // smallSphere.dom.appendChild(createSvg(sphereSvg)); // Removed icon
         this.append(smallSphere);
         tooltips.register(smallSphere, 'Small Sphere Select');
         smallSphere.dom.addEventListener('click', () => events.fire('tool.smallSphereSelection'));
