@@ -158,6 +158,12 @@ const initFileHandler = (scene: Scene, events: Events, dropTarget: HTMLElement, 
                     events.fire('selection.changed', model);
                 }
 
+                //! Activate small sphere selection tool after file import (for drag & drop)
+                setTimeout(() => {
+                    events.fire('tool.smallSphereSelection');
+                    events.fire('tool.deactivate');
+                }, 1300);
+
                 return model;
             } else if (lowerFilename.endsWith('.json')) {
                 await loadCameraPoses(url, filename, events);
