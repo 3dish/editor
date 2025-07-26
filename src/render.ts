@@ -58,6 +58,13 @@ const registerRenderEvents = (scene: Scene, events: Events) => {
     };
 
     events.function('render.image', async (imageSettings: ImageSettings) => {
+        // Set camera zoom for export
+        // const distance = scene.camera.distance;
+        // scene.camera.setDistance(.41);
+        // // Set a small delay to ensure the camera distance is applied before rendering
+        // await new Promise(resolve => setTimeout(resolve, 100));
+        // // scene.camera.onUpdate(0); // Force camera update
+
         events.fire('startSpinner');
 
         try {
@@ -132,6 +139,7 @@ const registerRenderEvents = (scene: Scene, events: Events) => {
             scene.camera.entity.camera.clearColor.set(0, 0, 0, 0);
 
             events.fire('stopSpinner');
+            //scene.camera.setDistance(distance);
         }
     });
 

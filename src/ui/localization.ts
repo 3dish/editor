@@ -281,7 +281,7 @@ const localizeInit = () => {
                     'select.separate': 'Separate',
 
                     // Help menu
-                    'help': 'Hello',
+                    'help': 'Help',
                     'help.shortcuts': 'Keyboard Shortcuts',
                     'help.user-guide': 'User Guide',
                     'help.log-issue': 'Log an Issue',

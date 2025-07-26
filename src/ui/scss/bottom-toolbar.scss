@@ -101,6 +101,13 @@
     }
 }
 
+// Make buttons wider when toolbar is collapsed (only Sphere/Center/Cam/Remove buttons visible)
+#bottom-toolbar.collapsed {
+    .bottom-toolbar-button, .bottom-toolbar-tool, .bottom-toolbar-toggle {
+        width: 65px;
+    }
+}
+
 .toolbar-center-btn {
     color: #f2d675;
     font-weight: 900; // Extra bold

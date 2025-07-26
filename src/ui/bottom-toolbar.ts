@@ -69,7 +69,8 @@ class BottomToolbar extends Container {
 
         const sphere = new Button({
             id: 'bottom-toolbar-sphere',
-            class: 'bottom-toolbar-button'
+            class: 'bottom-toolbar-button',
+            text: 'Sphere1'
         });
 
         const box = new Button({
@@ -134,7 +135,7 @@ class BottomToolbar extends Container {
         picker.dom.appendChild(createSvg(pickerSvg));
         polygon.dom.appendChild(createSvg(polygonSvg));
         brush.dom.appendChild(createSvg(brushSvg));
-        sphere.dom.appendChild(createSvg(sphereSvg));
+        // sphere.dom.appendChild(createSvg(sphereSvg)); // Removed icon
         box.dom.appendChild(createSvg(boxSvg));
         lasso.dom.appendChild(createSvg(lassoSvg));
         // crop.dom.appendChild(createSvg(cropSvg));
@@ -162,9 +163,9 @@ class BottomToolbar extends Container {
         const smallSphere = new Button({
             id: 'bottom-toolbar-small-sphere',
             class: 'bottom-toolbar-button',
-            text: 'Sphere'
+            text: 'Sphere2'
         });
-        smallSphere.dom.appendChild(createSvg(sphereSvg)); // Use the same icon for now
+        // smallSphere.dom.appendChild(createSvg(sphereSvg)); // Removed icon
         this.append(smallSphere);
         tooltips.register(smallSphere, 'Small Sphere Select');
         smallSphere.dom.addEventListener('click', () => events.fire('tool.smallSphereSelection'));
@@ -251,7 +252,8 @@ class BottomToolbar extends Container {
             events.fire('splats.selectBelowXZ');
         });
 
-        // //! Rings Button to remove rings below certain y value
+
+        // Rings Button to remove rings below certain y value
         // const ringsButton = new Button({
         //     id: 'bottom-toolbar-rings',
         //     class: 'bottom-toolbar-button',
@@ -260,11 +262,38 @@ class BottomToolbar extends Container {
         // ringsButton.dom.classList.add('toolbar-rings-btn');
         // this.append(ringsButton);
         // tooltips.register(ringsButton, 'Show/Hide Rings');
-        // ringsButton.on('click', () => {
+
+
+        // let repeatCount = 10; // Or any number you find sufficient
+
+        // function repeatSelectDelete(times) {
+        //     if (times <= 0) return;
         //     events.fire('select.rect', 'set', {
-        //         start: { x: 0.1, y: 0.1 },
-        //         end: { x: 0.5, y: 0.5 }
+        //         start: { x: 0, y: 0.65 },
+        //         end: { x: 1, y: 1 }
         //     });
+        //     setTimeout(() => {
+        //         events.fire('select.delete');
+        //         setTimeout(() => {
+        //             repeatSelectDelete(times - 1);
+        //         }, 20); // Delay to allow deletion to process
+        //     }, 20); // Delay to allow selection to register
+        // }
+
+        // // Usage in your button:
+        // ringsButton.on('click', () => {
+        //     events.fire('camera.toggleMode');
+        //     events.fire('camera.setOverlay', true);
+        //     events.fire('camera.setPose', {
+        //         position: { x: 0, y: .1, z: 2 },
+        //         target: { x: 0, y: .1, z: 0 }
+        //     });
+        //     events.fire('camera.align', 'pz');
+        //     setTimeout(() => {
+        //         repeatSelectDelete(10); // Repeat 10 times
+        //         events.fire('camera.toggleMode');
+        //         events.fire('camera.toggleOverlay')
+        //     }, 50); // Delay to allow camera to update
         // });
 
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));

@@ -798,7 +798,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
             // Create a filter function for SelectOp
             const filter = (i: number) => {
                 if (splat.calcSplatWorldPosition(i, tempVec)) {
-                    return tempVec.y < 0;
+                    return tempVec.y < 0 || tempVec.y > 0.48;       //! added to remove top cloud also
                 }
                 return false;
             };
