@@ -69,7 +69,7 @@ const getURLArgs = () => {
 const initShortcuts = (events: Events) => {
     const shortcuts = new Shortcuts(events);
 
-    shortcuts.register(['Delete', 'Backspace'], { event: 'select.delete' });
+    shortcuts.register(['Delete', 'Backspace', ' '], { event: 'select.delete' });
     shortcuts.register(['Escape'], { event: 'tool.deactivate' });
     shortcuts.register(['Tab'], { event: 'selection.next' });
     shortcuts.register(['1'], { event: 'tool.move', sticky: true });
@@ -93,7 +93,6 @@ const initShortcuts = (events: Events) => {
     shortcuts.register(['Z', 'z'], { event: 'edit.redo', ctrl: true, shift: true, capture: true });
     shortcuts.register(['M', 'm'], { event: 'camera.toggleMode' });
     shortcuts.register(['D', 'd'], { event: 'dataPanel.toggle' });
-    shortcuts.register([' '], { event: 'camera.toggleOverlay' });
 
     return shortcuts;
 };

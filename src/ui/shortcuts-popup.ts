@@ -18,7 +18,7 @@ const shortcutList = [
     { key: 'Ctrl + I', action: 'invert-selection' },
     { key: 'Shift', action: 'add-to-selection' },
     { key: 'Ctrl', action: 'remove-from-selection' },
-    { key: 'Delete', action: 'delete-selected-splats' },
+    { key: 'Delete/Space', action: 'delete-selected-splats' },
     { header: 'show' },
     { key: 'H', action: 'hide-selected-splats' },
     { key: 'U', action: 'unhide-all-splats' },

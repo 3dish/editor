@@ -397,6 +397,32 @@ class EditorUI {
         //! Next button logic
         nextButton.addEventListener('click', () => {
             if (currentFileIndex < folderFiles.length - 1) {
+                // Save current splat's color settings before clearing
+                const currentSplats = events.invoke('scene.splats');
+                if (currentSplats && currentSplats.length > 0) {
+                    const currentSplat = currentSplats[0];
+                    console.log('Saving color settings:', {
+                        brightness: currentSplat.brightness,
+                        blackPoint: currentSplat.blackPoint,
+                        temperature: currentSplat.temperature,
+                        saturation: currentSplat.saturation,
+                        whitePoint: currentSplat.whitePoint,
+                        transparency: currentSplat.transparency,
+                        tintClr: { r: currentSplat.tintClr.r, g: currentSplat.tintClr.g, b: currentSplat.tintClr.b }
+                    });
+                    sessionStorage.setItem('supersplat_color_settings', JSON.stringify({
+                        brightness: currentSplat.brightness,
+                        blackPoint: currentSplat.blackPoint,
+                        temperature: currentSplat.temperature,
+                        saturation: currentSplat.saturation,
+                        whitePoint: currentSplat.whitePoint,
+                        transparency: currentSplat.transparency,
+                        tintClr: { r: currentSplat.tintClr.r, g: currentSplat.tintClr.g, b: currentSplat.tintClr.b }
+                    }));
+                } else {
+                    console.log('No current splats found');
+                }
+                
                 events.fire('scene.clear');
                 events.fire('camera.reset');
                 events.fire('doc.setName', null);
