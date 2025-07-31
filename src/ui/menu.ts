@@ -50,7 +50,7 @@ class Menu extends Container {
         iconDom.src = logoPng;   //3dish logo
         iconDom.setAttribute('id', 'app-icon');
         iconDom.addEventListener('pointerdown', (event) => {
-            window.open('https://playcanvas.com', '_blank').focus();
+            window.open('https://3dishviewer.app/', '_blank').focus();
         });
 
         const icon = new Element({
