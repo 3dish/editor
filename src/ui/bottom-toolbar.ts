@@ -265,6 +265,45 @@ class BottomToolbar extends Container {
             events.fire('splats.selectBelowXZ');
         });
 
+        //! Remove2 Button: Second remove button
+        const removeBelowXZButton2 = new Button({
+            id: 'bottom-toolbar-remove-below-xz-2',
+            class: 'bottom-toolbar-button',
+            text: 'Remove2'
+        });
+        removeBelowXZButton2.dom.classList.add('toolbar-remove-btn');
+        this.append(removeBelowXZButton2);
+        tooltips.register(removeBelowXZButton2, 'Remove2 button');
+        removeBelowXZButton2.on('click', () => {
+            events.fire('splats.selectBelowXZ2');
+        });
+
+        //! Finish Button: Automates a sequence of operations
+        const finishButton = new Button({
+            id: 'bottom-toolbar-finish',
+            class: 'bottom-toolbar-button',
+            text: 'Finish'
+        });
+        finishButton.dom.classList.add('toolbar-finish-btn');
+        this.append(finishButton);
+        tooltips.register(finishButton, 'Automate cropping workflow');
+        finishButton.on('click', () => {
+            // Execute the sequence with delays to ensure each step completes
+            events.fire('splats.selectBelowXZ2');
+            setTimeout(() => {
+                events.fire('centerFit.selectedSplat');
+                setTimeout(() => {
+                    events.fire('tool.newApproach');
+                    setTimeout(() => {
+                        events.fire('select.delete'); // Delete the selected excess wood
+                        setTimeout(() => {
+                            events.fire('centerFit.selectedSplat');
+                        }, 100);
+                    }, 200); // Wait for crop selection to complete
+                }, 200);
+            }, 50);
+        });
+
 
 
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));
@@ -337,7 +376,9 @@ class BottomToolbar extends Container {
             customCamera1Button,
             customCamera2Button,
             customCamera3Button,
-            removeBelowXZButton
+            removeBelowXZButton,
+            removeBelowXZButton2,
+            finishButton
         ];
         // Add always-visible class for CSS
         for (const btn of this.alwaysVisibleButtons) {

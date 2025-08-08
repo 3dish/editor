@@ -62,7 +62,7 @@ class NewCropTool {
             
             const tempVec = new Vec3();
             if (splat.calcSplatWorldPosition(splatIndex, tempVec)) {
-                if (tempVec.y > 0.04) { // Dish splats only
+                if (tempVec.y > 0.05) { // Dish splats only
                     dishSplats.push({ x: tempVec.x, z: tempVec.z }); // Only store X,Z for distance calculations
                 }
             }
@@ -96,15 +96,18 @@ class NewCropTool {
                 this.currentSphereShape = sphereShape;
             }
             
+            // First select everything inside the sphere
             this.events.fire('select.bySphere', 'set', [centerX, centerY, centerZ, radius]);
+            
+            // Then invert the selection to select everything OUTSIDE the sphere
+            setTimeout(() => {
+                this.events.fire('select.invert');
+                this.events.fire('tool.deactivate');
+            }, 100); // Small delay to ensure sphere selection completes first
         });
     }
 
     private findFurthestSplats(dishSplats: { x: number, z: number }[]) {
-        if (dishSplats.length < 2) {
-            console.warn('Not enough dish splats');
-            return null;
-        }
         
         let maxDistance = 0;
         let splat1: { x: number, z: number } | null = null;

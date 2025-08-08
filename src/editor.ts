@@ -798,7 +798,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
             // Create a filter function for SelectOp
             const filter = (i: number) => {
                 if (splat.calcSplatWorldPosition(i, tempVec)) {
-                    return tempVec.y < 0 || tempVec.y > 0.48;       //! added to remove top cloud also
+                    return tempVec.y < 0;       
                 }
                 return false;
             };
@@ -811,7 +811,31 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
         
     });
+
+    //! Remove2 Button: Removes all splats under the xz plane (y < 0)---------------------------------------
+    events.on('splats.selectBelowXZ2', () => {
+        const splats = scene.getElementsByType(ElementType.splat);
+        splats.forEach((splatElem) => {
+            const splat = splatElem as Splat;
+            const tempVec = new Vec3();
+            // Create a filter function for SelectOp
+            const filter = (i: number) => {
+                if (splat.calcSplatWorldPosition(i, tempVec)) {
+                    return tempVec.y < 0.06 || tempVec.y > 0.4;       
+                }
+                return false;
+            };
+            // Use the same selection operation as the brush tool
+            events.fire('edit.add', new SelectOp(splat, 'add', filter));
+        });
+        selectedSplats().forEach((splat) => {
+            editHistory.add(new DeleteSelectionOp(splat));
+        });
+    });
+
+    
     
 };
+
 
 export { registerEditorEvents };
