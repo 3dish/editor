@@ -147,6 +147,7 @@ class BottomToolbar extends Container {
         this.append(lasso);
         this.append(polygon);
         this.append(brush);
+        
         this.append(new Element({ class: 'bottom-toolbar-separator' }));
         this.append(box);
         this.append(new Element({ class: 'bottom-toolbar-separator' }));
@@ -155,6 +156,18 @@ class BottomToolbar extends Container {
         this.append(scale);
         this.append(coordSpace);
         this.append(origin);
+
+
+        //! Add Crop button next to Sphere1
+        const CropButton = new Button({
+            id: 'bottom-toolbar-new-approach',
+            class: 'bottom-toolbar-button',
+            text: 'Crop'
+        });
+        this.append(CropButton);
+        tooltips.register(CropButton, 'New Cropping Approach');
+        CropButton.dom.addEventListener('click', () => events.fire('tool.newApproach'));
+
 
         // Move sphere button here, just before Center1
         this.append(sphere);
@@ -253,48 +266,6 @@ class BottomToolbar extends Container {
         });
 
 
-        // Rings Button to remove rings below certain y value
-        // const ringsButton = new Button({
-        //     id: 'bottom-toolbar-rings',
-        //     class: 'bottom-toolbar-button',
-        //     text: 'Rings'
-        // });
-        // ringsButton.dom.classList.add('toolbar-rings-btn');
-        // this.append(ringsButton);
-        // tooltips.register(ringsButton, 'Show/Hide Rings');
-
-
-        // let repeatCount = 10; // Or any number you find sufficient
-
-        // function repeatSelectDelete(times) {
-        //     if (times <= 0) return;
-        //     events.fire('select.rect', 'set', {
-        //         start: { x: 0, y: 0.65 },
-        //         end: { x: 1, y: 1 }
-        //     });
-        //     setTimeout(() => {
-        //         events.fire('select.delete');
-        //         setTimeout(() => {
-        //             repeatSelectDelete(times - 1);
-        //         }, 20); // Delay to allow deletion to process
-        //     }, 20); // Delay to allow selection to register
-        // }
-
-        // // Usage in your button:
-        // ringsButton.on('click', () => {
-        //     events.fire('camera.toggleMode');
-        //     events.fire('camera.setOverlay', true);
-        //     events.fire('camera.setPose', {
-        //         position: { x: 0, y: .1, z: 2 },
-        //         target: { x: 0, y: .1, z: 0 }
-        //     });
-        //     events.fire('camera.align', 'pz');
-        //     setTimeout(() => {
-        //         repeatSelectDelete(10); // Repeat 10 times
-        //         events.fire('camera.toggleMode');
-        //         events.fire('camera.toggleOverlay')
-        //     }, 50); // Delay to allow camera to update
-        // });
 
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));
         redo.dom.addEventListener('click', () => events.fire('edit.redo'));
@@ -358,6 +329,7 @@ class BottomToolbar extends Container {
         //! Store always-visible buttons for collapse logic
         this.alwaysVisibleButtons = [
             this.collapseButton,
+            CropButton,
             sphere,
             smallSphere,
             centerFitButton,

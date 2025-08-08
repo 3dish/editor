@@ -76,6 +76,14 @@ Files Changes:
 `src/ui/bottom-toolbar.ts`
 `src/ui/editor.ts`
 
+## Crop button added to delete extra wood
+
+Files added/changed:
+
+`src/tools/new-crop.ts`
+`src/ui/bottom-toolbar.ts`
+
+
 
 
 ## Local Development
