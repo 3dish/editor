@@ -28,6 +28,7 @@ import { SphereSelection } from './tools/sphere-selection';
 import { ToolManager } from './tools/tool-manager';
 import { registerTransformHandlerEvents } from './transform-handler';
 import { EditorUI } from './ui/editor';
+import { TiltDetectionTool } from './tools/tilt-detection';
 
 declare global {
     interface LaunchParams {
@@ -246,6 +247,7 @@ const main = async () => {
     toolManager.register('rotate', new RotateTool(events, scene));
     toolManager.register('scale', new ScaleTool(events, scene));
     toolManager.register('newApproach', new NewCropTool(events, dataProcessor, scene));
+    toolManager.register('tiltDetection', new TiltDetectionTool(events, dataProcessor, scene));
 
     editorUI.toolsContainer.dom.appendChild(maskCanvas);
 

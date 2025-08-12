@@ -168,6 +168,16 @@ class BottomToolbar extends Container {
         tooltips.register(CropButton, 'New Cropping Approach');
         CropButton.dom.addEventListener('click', () => events.fire('tool.newApproach'));
 
+        //! Add Tilt Detection button
+        const tiltButton = new Button({
+            id: 'bottom-toolbar-tilt-detection',
+            class: 'bottom-toolbar-button',
+            text: 'Tilt'
+        });
+        this.append(tiltButton);
+        tooltips.register(tiltButton, 'Detect and Correct Tilt');
+        tiltButton.dom.addEventListener('click', () => events.fire('tool.tiltDetection'));
+
 
         // Move sphere button here, just before Center1
         this.append(sphere);
@@ -287,21 +297,27 @@ class BottomToolbar extends Container {
         finishButton.dom.classList.add('toolbar-finish-btn');
         this.append(finishButton);
         tooltips.register(finishButton, 'Automate cropping workflow');
-        finishButton.on('click', () => {
-            // Execute the sequence with delays to ensure each step completes
-            events.fire('splats.selectBelowXZ2');
-            setTimeout(() => {
-                events.fire('centerFit.selectedSplat');
-                setTimeout(() => {
-                    events.fire('tool.newApproach');
-                    setTimeout(() => {
-                        events.fire('select.delete'); // Delete the selected excess wood
-                        setTimeout(() => {
-                            events.fire('centerFit.selectedSplat');
-                        }, 100);
-                    }, 200); // Wait for crop selection to complete
-                }, 200);
-            }, 50);
+        finishButton.on('click', async () => {
+            // Execute the sequence: Remove2 -> Center1 -> Tilt -> Center1 -> Crop -> Delete key -> Center1
+            events.fire('splats.selectBelowXZ2'); // Remove2
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
+            events.fire('centerFit.selectedSplat'); // Center1
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
+            events.fire('tool.tiltDetection'); // Tilt
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            events.fire('centerFit.selectedSplat'); // Center1
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
+            events.fire('tool.newApproach'); // Crop
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            events.fire('select.delete'); // Delete key
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
+            events.fire('centerFit.selectedSplat'); // Center1
         });
 
 
@@ -378,6 +394,7 @@ class BottomToolbar extends Container {
             customCamera3Button,
             removeBelowXZButton,
             removeBelowXZButton2,
+            tiltButton,
             finishButton
         ];
         // Add always-visible class for CSS
