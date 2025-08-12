@@ -71,7 +71,7 @@ class BottomToolbar extends Container {
         const sphere = new Button({
             id: 'bottom-toolbar-sphere',
             class: 'bottom-toolbar-button',
-            text: 'Sphere1'
+            text: 'Sphere'
         });
 
         const box = new Button({
@@ -163,20 +163,20 @@ class BottomToolbar extends Container {
         const CropButton = new Button({
             id: 'bottom-toolbar-new-approach',
             class: 'bottom-toolbar-button',
-            text: 'Crop'
+            text: 'Crop Wood'
         });
         this.append(CropButton);
-        tooltips.register(CropButton, 'New Cropping Approach');
+        tooltips.register(CropButton, 'Crop extra wood from the sides of the dish', 'top');
         CropButton.dom.addEventListener('click', () => events.fire('tool.newApproach'));
 
         //! Add Tilt Detection button
         const tiltButton = new Button({
             id: 'bottom-toolbar-tilt-detection',
             class: 'bottom-toolbar-button',
-            text: 'Tilt'
+            text: 'Fix Tilt'
         });
         this.append(tiltButton);
-        tooltips.register(tiltButton, 'Detect and Correct Tilt');
+        tooltips.register(tiltButton, 'Fix tilted dishes', 'top');
         tiltButton.dom.addEventListener('click', () => events.fire('tool.tiltDetection'));
 
 
@@ -187,22 +187,22 @@ class BottomToolbar extends Container {
         const smallSphere = new Button({
             id: 'bottom-toolbar-small-sphere',
             class: 'bottom-toolbar-button',
-            text: 'Sphere2'
+            text: 'Clean Cloud'
         });
         // smallSphere.dom.appendChild(createSvg(sphereSvg)); // Removed icon
         this.append(smallSphere);
-        tooltips.register(smallSphere, 'Small Sphere Select');
+        tooltips.register(smallSphere, 'Small Sphere for removing clouds', 'top');
         smallSphere.dom.addEventListener('click', () => events.fire('tool.smallSphereSelection'));
 
         //! First Center button
         const centerFitButton = new Button({
             id: 'bottom-toolbar-center-fit',
             class: 'bottom-toolbar-button',
-            text: 'Center1'
+            text: 'Center Dish'
         });
         centerFitButton.dom.classList.add('toolbar-center-btn');
         this.append(centerFitButton);
-        tooltips.register(centerFitButton, localize('center-fit.tooltip'));
+        tooltips.register(centerFitButton, 'Centers dishes within 5 units', 'top');
         centerFitButton.on('click', () => {
             events.fire('centerFit.selectedSplat');
         });
@@ -211,11 +211,11 @@ class BottomToolbar extends Container {
         const centerFitButton2 = new Button({
             id: 'bottom-toolbar-center-fit',
             class: 'bottom-toolbar-button',
-            text: 'Center2'
+            text: 'Small Center'
         });
         centerFitButton2.dom.classList.add('toolbar-center-btn');
         this.append(centerFitButton2);
-        tooltips.register(centerFitButton2, localize('center-fit.tooltip'));
+        tooltips.register(centerFitButton2, 'Centers taller dishes within 3 units', 'top');
         centerFitButton2.on('click', () => {
             events.fire('centerFit.selectedSplat2');
         });
@@ -226,11 +226,11 @@ class BottomToolbar extends Container {
         const customCamera1Button = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
-            text: 'Cam1'
+            text: 'Dish Cam'
         });
         customCamera1Button.dom.classList.add('toolbar-camera-btn');
         this.append(customCamera1Button);
-        tooltips.register(customCamera1Button, 'Set Camera');
+        tooltips.register(customCamera1Button, 'Primary Camera for most dishes', 'top');
         customCamera1Button.on('click', () => {
             events.fire('camera.setCustomPosition');
         });
@@ -239,11 +239,11 @@ class BottomToolbar extends Container {
         const customCamera2Button = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
-            text: 'Cam2'
+            text: 'Burger Cam'
         });
         customCamera2Button.dom.classList.add('toolbar-camera-btn');
         this.append(customCamera2Button);
-        tooltips.register(customCamera2Button, 'Set Camera');
+        tooltips.register(customCamera2Button, 'Camera for Burgers/Lower angle', 'top');
         customCamera2Button.on('click', () => {
             events.fire('camera.setCustomPosition2');
         });
@@ -252,11 +252,11 @@ class BottomToolbar extends Container {
         const customCamera3Button = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
-            text: 'Cam3'
+            text: 'Drink Cam'
         });
         customCamera3Button.dom.classList.add('toolbar-camera-btn');
         this.append(customCamera3Button);
-        tooltips.register(customCamera3Button, 'Set Camera');
+        tooltips.register(customCamera3Button, 'Camera for glasses', 'top');
         customCamera3Button.on('click', () => {
             events.fire('camera.setCustomPosition3');
         });
@@ -267,42 +267,39 @@ class BottomToolbar extends Container {
         const removeBelowXZButton = new Button({
             id: 'bottom-toolbar-remove-below-xz',
             class: 'bottom-toolbar-button',
-            text: 'Remove'
+            text: 'Remove Bottom'
         });
         removeBelowXZButton.dom.classList.add('toolbar-remove-btn');
         this.append(removeBelowXZButton);
-        tooltips.register(removeBelowXZButton, 'Remove all splats below the XZ plane (y < 0)');
+        tooltips.register(removeBelowXZButton, 'Remove splats below the y < 0', 'top');
         removeBelowXZButton.on('click', () => {
             events.fire('splats.selectBelowXZ');
         });
 
-        //! Remove2 Button: Second remove button
+        //! Step 1 Button: Second remove button
         const removeBelowXZButton2 = new Button({
             id: 'bottom-toolbar-remove-below-xz-2',
             class: 'bottom-toolbar-button',
-            text: 'Remove2'
+            text: 'Step 1'
         });
-        removeBelowXZButton2.dom.classList.add('toolbar-remove-btn');
+        removeBelowXZButton2.dom.classList.add('toolbar-step-btn');
         this.append(removeBelowXZButton2);
-        tooltips.register(removeBelowXZButton2, 'Remove2 button');
+        tooltips.register(removeBelowXZButton2, 'Removes cloud and extra wood from bottom', 'top');
         removeBelowXZButton2.on('click', () => {
             events.fire('splats.selectBelowXZ2');
         });
-
-        //! Finish Button: Automates a sequence of operations
+ 
+        //! FInal STep Button: Automates a sequence of operations
         const finishButton = new Button({
             id: 'bottom-toolbar-finish',
             class: 'bottom-toolbar-button',
-            text: 'Finish'
+            text: 'Final Step'
         });
         finishButton.dom.classList.add('toolbar-finish-btn');
         this.append(finishButton);
-        tooltips.register(finishButton, 'Automate cropping workflow');
+        tooltips.register(finishButton, 'Finishes rest of the workflow', 'top');
         finishButton.on('click', async () => {
-            // Execute the sequence: Remove2 -> Center1 -> Tilt -> Center1 -> Crop -> Delete key -> Center1
-            events.fire('splats.selectBelowXZ2'); // Remove2
-            await new Promise(resolve => setTimeout(resolve, 50));
-            
+            // Execute the sequence: Center1 -> Tilt -> Center1 -> Crop -> Delete key -> Center1
             events.fire('centerFit.selectedSplat'); // Center1
             await new Promise(resolve => setTimeout(resolve, 50));
             
@@ -365,20 +362,20 @@ class BottomToolbar extends Container {
         });
 
         // register tooltips
-        tooltips.register(undo, localize('tooltip.undo'));
-        tooltips.register(redo, localize('tooltip.redo'));
-        tooltips.register(picker, localize('tooltip.picker'));
-        tooltips.register(brush, localize('tooltip.brush'));
-        tooltips.register(polygon, localize('tooltip.polygon'));
-        tooltips.register(lasso, 'Lasso Select');
-        tooltips.register(sphere, localize('tooltip.sphere'));
-        tooltips.register(box, localize('tooltip.box'));
+        tooltips.register(undo, localize('tooltip.undo'), 'top');
+        tooltips.register(redo, localize('tooltip.redo'), 'top');
+        tooltips.register(picker, localize('tooltip.picker'), 'top');
+        tooltips.register(brush, localize('tooltip.brush'), 'top');
+        tooltips.register(polygon, localize('tooltip.polygon'), 'top');
+        tooltips.register(lasso, 'Lasso Select', 'top');
+        tooltips.register(sphere, localize('tooltip.sphere'), 'top');
+        tooltips.register(box, localize('tooltip.box'), 'top');
         // tooltips.register(crop, 'Crop');
-        tooltips.register(translate, localize('tooltip.translate'));
-        tooltips.register(rotate, localize('tooltip.rotate'));
-        tooltips.register(scale, localize('tooltip.scale'));
-        tooltips.register(coordSpace, localize('tooltip.local-space'));
-        tooltips.register(origin, localize('tooltip.bound-center'));
+        tooltips.register(translate, localize('tooltip.translate'), 'top');
+        tooltips.register(rotate, localize('tooltip.rotate'), 'top');
+        tooltips.register(scale, localize('tooltip.scale'), 'top');
+        tooltips.register(coordSpace, localize('tooltip.local-space'), 'top');
+        tooltips.register(origin, localize('tooltip.bound-center'), 'top');
 
 
 
@@ -397,6 +394,9 @@ class BottomToolbar extends Container {
             tiltButton,
             finishButton
         ];
+
+        console.log('Text buttons count:', this.textButtons.length);
+        this.textButtons.forEach(btn => console.log('Text button:', btn.text));
 
         // Add wider padding class to text buttons
         this.textButtons.forEach(btn => {
@@ -419,12 +419,45 @@ class BottomToolbar extends Container {
             origin
         ];
 
+        console.log('Icon buttons count:', this.iconButtons.length);
+
         // Ensure toolbar starts with text buttons visible, icon buttons hidden
+        console.log('Initial state - collapsed =', this.collapsed);
+        
+        // Debug: Check if all buttons are properly categorized
+        const allButtons = [
+            undo, redo, picker, lasso, polygon, brush, box, translate, rotate, scale, coordSpace, origin,
+            CropButton, sphere, smallSphere, centerFitButton, centerFitButton2, customCamera1Button, 
+            customCamera2Button, customCamera3Button, removeBelowXZButton, removeBelowXZButton2, tiltButton, finishButton
+        ];
+        
+        console.log('Total buttons in toolbar:', allButtons.length);
+        console.log('Text buttons in array:', this.textButtons.length);
+        console.log('Icon buttons in array:', this.iconButtons.length);
+        
+        // Check for any buttons that might not be in either array
+        const categorizedButtons = [...this.textButtons, ...this.iconButtons];
+        const uncategorizedButtons = allButtons.filter(btn => !categorizedButtons.includes(btn));
+        if (uncategorizedButtons.length > 0) {
+            console.warn('Uncategorized buttons found:', uncategorizedButtons.length);
+        }
+        
         this.applyCollapseState();
+        
+        // Double-check initial state
+        console.log('After applyCollapseState:');
+        this.textButtons.forEach(btn => {
+            console.log('Text button', btn.text, 'display =', btn.dom.style.display);
+        });
+        this.iconButtons.forEach(btn => {
+            console.log('Icon button display =', btn.dom.style.display);
+        });
     }
 
     //! Apply collapse to the toolbar
     applyCollapseState() {
+        console.log('applyCollapseState called, collapsed =', this.collapsed);
+        
         this.collapseButton.dom.innerHTML = '';
         const icon = createSvg(collapseSvg);
         icon.classList.add('menu-icon');
@@ -436,11 +469,21 @@ class BottomToolbar extends Container {
         
         // Switch between text buttons and icon buttons
         this.textButtons.forEach(btn => {
-            btn.hidden = this.collapsed; // Hide text buttons when showing icon buttons
+            if (this.collapsed) {
+                btn.dom.style.setProperty('display', 'none', 'important'); // Hide text buttons when collapsed=true
+            } else {
+                btn.dom.style.setProperty('display', 'inline-flex', 'important'); // Show text buttons when collapsed=false
+            }
+            console.log('Text button', btn.text, 'display =', btn.dom.style.display);
         });
         
         this.iconButtons.forEach(btn => {
-            btn.hidden = !this.collapsed; // Show icon buttons when collapsed=true, hide when collapsed=false
+            if (!this.collapsed) {
+                btn.dom.style.setProperty('display', 'none', 'important'); // Hide icon buttons when collapsed=false
+            } else {
+                btn.dom.style.setProperty('display', 'inline-flex', 'important'); // Show icon buttons when collapsed=true
+            }
+            console.log('Icon button display =', btn.dom.style.display);
         });
         
         // Handle separators - hide them when showing only text buttons
