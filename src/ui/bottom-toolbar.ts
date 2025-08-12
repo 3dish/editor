@@ -20,9 +20,10 @@ const createSvg = (svgString: string) => {
 };
 
 class BottomToolbar extends Container {
-    private collapsed = true;                 //!added for collapse/expand button
+    private collapsed = false;                 //!added for collapse/expand button
     private collapseButton: Button;            //!added for collapse/expand button                                   
-    private alwaysVisibleButtons: Button[];    //!added for collapse/expand button
+    private textButtons: Button[];             //!text buttons (Crop, Tilt, Sphere, etc.)
+    private iconButtons: Button[];             //!icon buttons (undo, redo, picker, etc.)
     constructor(events: Events, tooltips: Tooltips, args = {}) {
         args = {
             ...args,
@@ -381,9 +382,8 @@ class BottomToolbar extends Container {
 
 
 
-        //! Store always-visible buttons for collapse logic
-        this.alwaysVisibleButtons = [
-            this.collapseButton,
+        //! Store text buttons (Crop, Tilt, Sphere, Center, Cam, Remove, Finish) - excluding toggle button
+        this.textButtons = [
             CropButton,
             sphere,
             smallSphere,
@@ -397,30 +397,56 @@ class BottomToolbar extends Container {
             tiltButton,
             finishButton
         ];
-        // Add always-visible class for CSS
-        for (const btn of this.alwaysVisibleButtons) {
-            btn.class.add('always-visible');
-        }
 
-        // Ensure toolbar starts collapsed
+        // Add wider padding class to text buttons
+        this.textButtons.forEach(btn => {
+            btn.class.add('text-button-wide');
+        });
+
+        //! Store icon buttons (undo, redo, picker, lasso, polygon, brush, box, translate, rotate, scale, coordSpace, origin)
+        this.iconButtons = [
+            undo,
+            redo,
+            picker,
+            lasso,
+            polygon,
+            brush,
+            box,
+            translate,
+            rotate,
+            scale,
+            coordSpace,
+            origin
+        ];
+
+        // Ensure toolbar starts with text buttons visible, icon buttons hidden
         this.applyCollapseState();
     }
 
     //! Apply collapse to the toolbar
     applyCollapseState() {
-        this.dom.classList.toggle('collapsed', this.collapsed);
         this.collapseButton.dom.innerHTML = '';
         const icon = createSvg(collapseSvg);
         icon.classList.add('menu-icon');
         icon.style.transform = this.collapsed ? 'rotate(180deg)' : '';
         this.collapseButton.dom.appendChild(icon);
+        
+        // Ensure toggle button is always visible
+        this.collapseButton.hidden = false;
+        
+        // Switch between text buttons and icon buttons
+        this.textButtons.forEach(btn => {
+            btn.hidden = this.collapsed; // Hide text buttons when showing icon buttons
+        });
+        
+        this.iconButtons.forEach(btn => {
+            btn.hidden = !this.collapsed; // Show icon buttons when collapsed=true, hide when collapsed=false
+        });
+        
+        // Handle separators - hide them when showing only text buttons
         Array.from(this.dom.children).forEach((child: HTMLElement) => {
-            const btn = (child as any).ui;
-            if (btn instanceof Button && !this.alwaysVisibleButtons.includes(btn)) {
-                btn.hidden = this.collapsed;
-            }
             if (child.classList && child.classList.contains('bottom-toolbar-separator')) {
-                child.style.display = this.collapsed ? 'none' : '';
+                child.style.display = this.collapsed ? '' : 'none';
             }
         });
     }

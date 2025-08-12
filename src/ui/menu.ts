@@ -89,12 +89,22 @@ class Menu extends Container {
 
         //! Image Export button
         const quickImageRender = new Label({
-            text: 'Image Export',
+            text: 'Thumbnail Export',
             class: 'menu-option'
         });
         quickImageRender.dom.classList.add('menu-option-persistent'); //added for persistent button
         quickImageRender.on('click', () => {
             events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 320, height: 320, transparentBg: true });
+        });
+
+        //! High Res Image Export button (1200x1200px)
+        const highResImageRender = new Label({
+            text: 'HD Image Export',
+            class: 'menu-option'
+        });
+        highResImageRender.dom.classList.add('menu-option-persistent'); //added for persistent button
+        highResImageRender.on('click', () => {
+            events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 1200, height: 1200, transparentBg: true });
         });
 
         //! Delete Workspace button
@@ -137,6 +147,7 @@ class Menu extends Container {
         buttonsContainer.append(arrow);
         buttonsContainer.append(exportLabel);
         buttonsContainer.append(quickImageRender);
+        buttonsContainer.append(highResImageRender);
         buttonsContainer.append(resetWorkspaceLabel);
         buttonsContainer.append(collapse);
         buttonsContainer.append(arrow);
