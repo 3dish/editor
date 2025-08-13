@@ -153,7 +153,9 @@ class TiltDetectionTool {
         
         // Step 4: Calculate tilt angle from slope
         const tiltAngle = Math.atan(Math.abs(regression.slope)) * (180 / Math.PI);
-        const tiltDirection = regression.slope > 0 ? 90 : -90; // Simplified direction
+        // Positive slope means Y increases with X (right side higher)
+        // Negative slope means Y decreases with X (left side higher)
+        const tiltDirection = regression.slope > 0 ? 90 : -90;
         
         // Step 5: Calculate confidence based on R-squared
         const confidence = regression.rSquared;
@@ -197,20 +199,26 @@ class TiltDetectionTool {
     private applyTiltCorrection(splat: Splat, tiltResult: TiltResult) {
         console.log('Applying tilt correction:', {
             angle: tiltResult.tiltAngle.toFixed(2) + '°',
-            direction: tiltResult.tiltDirection.toFixed(2) + '°'
+            direction: tiltResult.tiltDirection.toFixed(2) + '°',
+            slope: tiltResult.averageTilt.toFixed(4)
         });
         
         // Calculate the rotation needed to correct the tilt
         const tiltAngleRadians = tiltResult.tiltAngle * (Math.PI / 180);
         const rotationAxis = new Vec3(0, 0, 1); // Rotate around Z-axis to correct X-tilt
         
-        // Apply a larger correction - multiply by a factor to ensure full correction
-        const correctionFactor = 1.5; // Apply 1.5x the detected tilt
-        const rotationAmount = tiltAngleRadians * correctionFactor;
+        // Determine correction direction based on slope
+        // If slope is positive (right side higher), we need to rotate clockwise (negative Z rotation)
+        // If slope is negative (left side higher), we need to rotate counter-clockwise (positive Z rotation)
+        const correctionDirection = tiltResult.averageTilt > 0 ? -1 : 1;
+        
+        // Apply correction with conservative factor
+        const correctionFactor = 1.0; // Use 1:1 correction to avoid overcorrection
+        const rotationAmount = tiltAngleRadians * correctionFactor * correctionDirection;
         
         // Create rotation quaternion
         const rotationQuat = new Quat();
-        rotationQuat.setFromAxisAngle(rotationAxis, -rotationAmount); // Negative to correct the tilt
+        rotationQuat.setFromAxisAngle(rotationAxis, rotationAmount);
         
         // Get current rotation and apply correction
         const currentRotation = splat.entity.getLocalRotation();
@@ -220,7 +228,7 @@ class TiltDetectionTool {
         // Apply the corrected rotation
         splat.entity.setLocalRotation(correctedRotation);
         
-        console.log('Tilt correction applied successfully with factor:', correctionFactor);
+        console.log('Tilt correction applied with factor:', correctionFactor, 'direction:', correctionDirection > 0 ? 'CCW' : 'CW');
     }
 }
 
