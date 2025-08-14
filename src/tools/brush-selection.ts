@@ -16,7 +16,7 @@ class BrushSelection {
         const circle = document.createElementNS(svg.namespaceURI, 'circle') as SVGCircleElement;
         circle.setAttribute('r', radius.toString());
         circle.setAttribute('fill', 'rgba(255, 102, 0, 0.2)');
-        circle.setAttribute('stroke', '#f60');
+        circle.setAttribute('stroke', '#8b81cc');
         circle.setAttribute('stroke-width', '1');
         circle.setAttribute('stroke-dasharray', '5, 5');
 
@@ -34,7 +34,7 @@ class BrushSelection {
 
             if (dragId !== undefined) {
                 context.beginPath();
-                context.strokeStyle = '#f60';
+                context.strokeStyle = '#8b81cc';
                 context.lineCap = 'round';
                 context.lineWidth = radius * 2;
                 context.moveTo(prev.x, prev.y);

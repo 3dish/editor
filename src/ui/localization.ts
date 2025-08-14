@@ -345,7 +345,7 @@ const localizeInit = () => {
                     'colors.reset': 'Reset',
 
                     // Data panel
-                    'data': 'SPLAT DATA',
+                    'data': 'SPLAT DATA2',
                     'data.distance': 'Distance',
                     'data.volume': 'Volume',
                     'data.surface-area': 'Surface Area',

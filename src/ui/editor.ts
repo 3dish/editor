@@ -1,7 +1,7 @@
 import { Container, Label, Button } from 'pcui';  //! Added for File Selector feature
 import { Mat4, Vec3 } from 'playcanvas';
 
-import { DataPanel } from './data-panel';
+
 import { Events } from '../events';
 import { BottomToolbar } from './bottom-toolbar';
 import { ColorPanel } from './color-panel';
@@ -472,11 +472,9 @@ class EditorUI {
         });
 
         //onst timelinePanel = new TimelinePanel(events, tooltips);
-        const dataPanel = new DataPanel(events);
 
         mainContainer.append(canvasContainer);
         //mainContainer.append(timelinePanel);
-        mainContainer.append(dataPanel);
 
         editorContainer.append(mainContainer);
 
