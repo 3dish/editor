@@ -150,7 +150,7 @@ const initFileHandler = (scene: Scene, events: Events, dropTarget: HTMLElement, 
                 // Simple helper to get stored color settings
                 const getStoredColorSettings = () => {
                     try {
-                        const stored = sessionStorage.getItem('supersplat_color_settings');
+                        const stored = sessionStorage.getItem('3dish_color_settings');
                         return stored ? JSON.parse(stored) : null;
                     } catch (e) {
                         return null;

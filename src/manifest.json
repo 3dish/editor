@@ -1,7 +1,7 @@
 {
-    "name": "SuperSplat",
-    "short_name": "SuperSplat",
-    "description": "SuperSplat is an advanced browser-based editor for manipulating and optimizing 3D Gaussian Splats. It is open source and engine agnostic.",
+    "name": "3Dish Editor",
+    "short_name": "3Dish Editor",
+    "description": "3Dish Editor is an advanced browser-based editor for manipulating and optimizing 3D Gaussian Splats. It is open source and engine agnostic.",
     "display": "fullscreen",
     "start_url": "./",
     "scope": "./",
