@@ -77,7 +77,7 @@ class Menu extends Container {
             class: 'menu-option'
         });
 
-        //! Export Splat button
+        //! Export Splat button  8888   
         const exportLabel = new Label({
             text: 'Export Splat',
             class: 'menu-option'
@@ -87,7 +87,7 @@ class Menu extends Container {
             events.invoke('scene.export', 'splat');
         });
 
-        //! Image Export button
+        //! Image Export button  8888
         const quickImageRender = new Label({
             text: 'Thumbnail Export',
             class: 'menu-option'
@@ -97,7 +97,7 @@ class Menu extends Container {
             events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 320, height: 320, transparentBg: true });
         });
 
-        //! High Res Image Export button (1200x1200px)
+        //! High Res Image Export button (1200x1200px)  8888
         const highResImageRender = new Label({
             text: 'HD Image Export',
             class: 'menu-option'
@@ -107,7 +107,7 @@ class Menu extends Container {
             events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 1200, height: 1200, transparentBg: true });
         });
 
-        //! Delete Workspace button
+        //! Delete Workspace button  8888
         const resetWorkspaceLabel = new Label({
             text: 'Delete',
             class: 'menu-option'

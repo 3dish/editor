@@ -95,7 +95,7 @@ class BrushSelection {
 
                 dragEnd();
 
-                //! inverse selection added (alt+brush)
+                //! inverse selection added (alt+brush)  8888
                 if (e.altKey) {
                     events.fire('select.byMask', 'inverse', canvas, context);
                 } else {

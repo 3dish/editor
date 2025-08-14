@@ -1,90 +1,109 @@
-## Brightness and BlackPoint Default Values
+## 1. Center Dish and Small Center buttons
+
+**Functionality**: Centers dish within 5 blocks or 3 blocks. To change the number of blocks to center within, go to file `src/editor.ts`and change the "const scale" variable, and to change the bootom of image placement, change the "targetY" variable in the same function
+
+**Implementation Files**:
+- `src/editor.ts`
+- `src/ui/bottom-toolbar.ts`
+
+
+## 2. Camera buttons for  2D images
+
+**Functionality**: Sets camera angles for the 2d images
+
+**Implementation Files**:
+- `src/editor.ts`
+- `src/ui/bottom-toolbar.ts`
+
+## 3. Remove Bottom button
+
+**Functionality**: Removes the splats below xz plane (y<0)
+
+**Implementation Files**:
+- `src/editor.ts`
+- `src/ui/bottom-toolbar.ts`
+
+
+## 4. Sphere button Update
+
+**Functionality**: Calls the sphere to clean extra splats from the sides of the wood 
+
+**Implementation Files**:
+- `src/ui/sphere-shape.ts`
+- `src/tools/sphere-selection.ts`
+
+
+## 5. Clean Wood button added to remove clouds
+
+**Functionality**: Creates a small sphere selection (radius 0.53) at a specific offset to remove cloud splats around the dish.
+
+**Implementation Files**:
+- `src/main.ts`
+- `src/sphere-shape.ts`
+- `src/tools/sphere-selection.ts`
+- `src/ui/bottom-toolbar.ts`
+- `src/ui/editor.ts`
+
+## 6. Crop Wood button added to delete extra wood
+
+**Functionality**: Crops extra wood from the sides of the dish by creating an sphere selection around the dish and removing surrounding wood splats.
+
+**Implementation Files**:
+- `src/tools/new-crop.ts` - New file created for main crop tool implementation
+- `src/ui/bottom-toolbar.ts` - Button UI 
+
+## 7. Tilt button added to fix tilted dishes
+
+**Functionality**: Automatically detects and corrects tilted dishes by analyzing wood splat positions and applying statistical tilt correction in multiple iterations.
+
+**Implementation Files**:
+- `src/tools/tilt-detection.ts` - New file created for Tilt detection and correction algorithm
+- `src/ui/bottom-toolbar.ts` - Button UI 
+
+
+## 8. Step 1 button
+**Functionality**: Removes cloud and extra wood from the bottom by selecting splats below y=0.06 or above y=0.4 and deleting them.
+**Implementation Files**:
+- `src/editor.ts` - Remove logic (splats.selectBelowXZ2 event)
+- `src/ui/bottom-toolbar.ts` - Button UI and event binding
+
+## 9. Final Step button
+**Functionality**: Automates a complete workflow sequence: Center → Fix Tilt → Center → Crop → Delete → Center with appropriate delays between operations.
+**Implementation Files**:
+- `src/editor.ts` - Sequence automation logic
+- `src/ui/bottom-toolbar.ts` - Button UI and event binding
+
+
+## 10. Thumbnail Export and HD ImagecExport buttons
+
+**Functionality**: Renders 2d images for thumbnail, and high quality images
+
+**Implementation Files**:
+- `src/ui/menu.ts`
+- `src/ui/viewer-export-popup.ts`
+
+
+## 11. Folder Path Feature and Wood file added
+
+**Functionality**: Allows users to select a folder of .plys or .splats to work on the editor
+
+**Implementation Files**:
+- `src/ui/editor.ts`
+
+## 12. Brightness and BlackPoint Default Values
 
 To change these values go to files `src/ui/color-panel.ts` and `src/splat.ts`
 
-## Center and Fit
 
-To change the number of blocks to center within, go to file `src/editor.ts`and change the "const scale" variable, and to change the bootom of image placement, change the "targetY" variable in the same function
+## 13. Inverse Brush/Rectangle Selection
 
-### Files edited for Center Button feature:
-`src/editor.ts`
-`src/ui/bottom-toolbar.ts`
+**Functionality**: Alt+brush/rect now selects/highlights the region not brushed
 
-## Export Button
-
-Files changed:
-`src/ui/menu.ts`
-`src/ui/viewer-export-popup.ts`
-
-
-## Set Camera Position for 2D image
-
-Cam1 and Cam2 buttons:
-The Set Camera Position feature was added in the following files:
+**Implementation Files**:
+- `src/edit-ops.ts`
 - `src/editor.ts`
-- `src/ui/bottom-toolbar.ts`
-
-## Remove Button
-
-Removes the splats below xz plane (y<0)
-- `src/editor.ts`
-- `src/ui/bottom-toolbar.ts`
-
-## Files Edited for the New Buttons and Toggle buttons
-- `src/editor.ts`
-- `src/ui/bottom-toolbar.ts`
-- `src/ui/scss/bottom-toolbar.scss`
-
-## Rotation set to (0, 0, 179.3)
-
-Files edited
-`src/ui/transform.ts`
-`src/asset-loader.ts`
-
-## Sphere button Update
-
-Files changed:
-`src/ui/sphere-shape.ts`
-`src/tools/sphere-selection.ts`
-
-## Brightness and Blackpoint set to 0 if splat file imported
-
-Files changed:
-`src/file-handler.ts`
-
-## Folder Path Feature and Wood file added
-
-Files Changed:
-`src/ui/editor.ts`
-
-## Inverse Brush/Rectangle Selection
-
-Alt+brush/rect now selects/highlights the region not brushed
-
-Files changed:
-`src/edit-ops.ts`
-`src/editor.ts`
-`src/tools/brush-selection.ts`
-`src/tools/rect-selection.ts`
-
-## Small Sphere button added to remove clouds
-
-Files Changes:
-`src/main.ts`
-`src/sphere-shape.ts`
-`src/tools/sphere-selection.ts`
-`src/ui/bottom-toolbar.ts`
-`src/ui/editor.ts`
-
-## Crop button added to delete extra wood
-
-Files added/changed:
-
-`src/tools/new-crop.ts`
-`src/ui/bottom-toolbar.ts`
-
-
-
+- `src/tools/brush-selection.ts`
+- `src/tools/rect-selection.ts`
 
 ## Local Development
 

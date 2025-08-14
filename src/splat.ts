@@ -71,8 +71,8 @@ class Splat extends Element {
     _tintClr = new Color(1, 1, 1);
     _temperature = 0;
     _saturation = 1;
-    _brightness = 0.1;
-    _blackPoint = 0.1;
+    _brightness = 0.1;  //! changed from 0 to 0.1  8888
+    _blackPoint = 0.1;  //! changed from 0 to 0.1  8888
     _whitePoint = 1;
     _transparency = 1;
 
@@ -609,8 +609,8 @@ class Splat extends Element {
         this.tintClr = new Color(tintClr[0], tintClr[1], tintClr[2], tintClr[3]);
         this.temperature = temperature ?? 0;
         this.saturation = saturation ?? 1;
-        this.brightness = brightness ?? 0.1;
-        this.blackPoint = blackPoint ?? 0.1;
+        this.brightness = brightness ?? 0.1;  //! changed from 0 to 0.1  8888
+        this.blackPoint = blackPoint ?? 0.1;  //! changed from 0 to 0.1  8888
         this.whitePoint = whitePoint;
         this.transparency = transparency;
     }

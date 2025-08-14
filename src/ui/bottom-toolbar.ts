@@ -114,7 +114,7 @@ class BottomToolbar extends Container {
             icon: 'E189'
         });
 
-        //! Collapse/Expand button added(styled like menu bar)/////////////////
+        //! Collapse/Expand button added(styled like menu bar)  8888
         this.collapseButton = new Button({
             id: 'bottom-toolbar-collapse',
             class: 'bottom-toolbar-button',
@@ -159,7 +159,7 @@ class BottomToolbar extends Container {
         this.append(origin);
 
 
-        //! Add Crop button next to Sphere1
+        //! Add Crop button next to Sphere1  8888
         const CropButton = new Button({
             id: 'bottom-toolbar-new-approach',
             class: 'bottom-toolbar-button',
@@ -169,7 +169,7 @@ class BottomToolbar extends Container {
         tooltips.register(CropButton, 'Crop extra wood from the sides of the dish', 'top');
         CropButton.dom.addEventListener('click', () => events.fire('tool.newApproach'));
 
-        //! Add Tilt Detection button
+        //! Add Tilt Detection button  8888
         const tiltButton = new Button({
             id: 'bottom-toolbar-tilt-detection',
             class: 'bottom-toolbar-button',
@@ -183,7 +183,7 @@ class BottomToolbar extends Container {
         // Move sphere button here, just before Center1
         this.append(sphere);
 
-        //! Add Small Sphere button UI
+        //! Add Small Sphere button UI  8888
         const smallSphere = new Button({
             id: 'bottom-toolbar-small-sphere',
             class: 'bottom-toolbar-button',
@@ -194,7 +194,7 @@ class BottomToolbar extends Container {
         tooltips.register(smallSphere, 'Small Sphere for removing clouds', 'top');
         smallSphere.dom.addEventListener('click', () => events.fire('tool.smallSphereSelection'));
 
-        //! First Center button
+        //! First Center button  8888
         const centerFitButton = new Button({
             id: 'bottom-toolbar-center-fit',
             class: 'bottom-toolbar-button',
@@ -207,8 +207,8 @@ class BottomToolbar extends Container {
             events.fire('centerFit.selectedSplat');
         });
 
-        //! Second Center button
-        const centerFitButton2 = new Button({
+        //! Second Center button  8888
+        const centerFitButton2 = new Button({       
             id: 'bottom-toolbar-center-fit',
             class: 'bottom-toolbar-button',
             text: 'Small Center'
@@ -221,7 +221,7 @@ class BottomToolbar extends Container {
         });
         
 
-        //! Custom Camera Position buttons
+        //! Custom Camera Position buttons  8888
         //! Camera 1 ----
         const customCamera1Button = new Button({
             id: 'bottom-toolbar-custom-camera',
@@ -263,7 +263,7 @@ class BottomToolbar extends Container {
 
 
 
-        //! Remove Button: Removes all splats under the xz plane (y < 0)---------------------------------------
+        //! Remove Button: Removes all splats under the xz plane (y < 0)   8888
         const removeBelowXZButton = new Button({
             id: 'bottom-toolbar-remove-below-xz',
             class: 'bottom-toolbar-button',
@@ -276,7 +276,7 @@ class BottomToolbar extends Container {
             events.fire('splats.selectBelowXZ');
         });
 
-        //! Step 1 Button: Second remove button
+        //! Step 1 Button: Second remove button  8888
         const removeBelowXZButton2 = new Button({
             id: 'bottom-toolbar-remove-below-xz-2',
             class: 'bottom-toolbar-button',
@@ -289,7 +289,7 @@ class BottomToolbar extends Container {
             events.fire('splats.selectBelowXZ2');
         });
  
-        //! FInal STep Button: Automates a sequence of operations
+        //! FInal STep Button: Automates a sequence of operations  8888 
         const finishButton = new Button({
             id: 'bottom-toolbar-finish',
             class: 'bottom-toolbar-button',
@@ -379,7 +379,7 @@ class BottomToolbar extends Container {
 
 
 
-        //! Store text buttons (Crop, Tilt, Sphere, Center, Cam, Remove, Finish) - excluding toggle button
+        //! Store text buttons (Crop, Tilt, Sphere, Center, Cam, Remove, Finish) - excluding toggle button  8888
         this.textButtons = [
             CropButton,
             sphere,
@@ -403,7 +403,7 @@ class BottomToolbar extends Container {
             btn.class.add('text-button-wide');
         });
 
-        //! Store icon buttons (undo, redo, picker, lasso, polygon, brush, box, translate, rotate, scale, coordSpace, origin)
+        //! Store icon buttons (undo, redo, picker, lasso, polygon, brush, box, translate, rotate, scale, coordSpace, origin)  8888
         this.iconButtons = [
             undo,
             redo,
@@ -454,7 +454,7 @@ class BottomToolbar extends Container {
         });
     }
 
-    //! Apply collapse to the toolbar
+    //! Apply collapse to the toolbar  8888 
     applyCollapseState() {
         console.log('applyCollapseState called, collapsed =', this.collapsed);
         

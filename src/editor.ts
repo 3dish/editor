@@ -342,7 +342,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
                     return selected.has(i);
                 };
 
-                //! inverse selection feature added (alt+brush)
+                //! inverse selection feature added (alt+brush)  8888
                 if (op === 'inverse') {
                     events.fire('edit.add', new SelectOp(splat, 'inverse', filter));
                 } else {
@@ -653,7 +653,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
 
         
-    //! Center & Fit: Center and scale the selected splat to fit within ±0.5 units on X and Z (5 small grid blocks each side), and center at (0,0,0)
+    //! Center and scale the selected splat to fit within ±0.5 units     8888
     //? Button 1: Center button event handler-----------------------------------------
     events.on('centerFit.selectedSplat', (targetY = -0.023) => {     // targetY definition
         const splat = events.invoke('selection');
@@ -763,7 +763,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
 
 
-    //! Custom camera position event handler(Camera Button)---------------------------------------
+    //! Custom camera position event handler(Camera Button)     8888
     //? Camera 1 ----
     events.on('camera.setCustomPosition', () => {
         scene.camera.setFocalPoint(new Vec3(0, 0, 0), 0);
@@ -789,7 +789,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
 
 
-    //! Remove Button: Removes all splats under the xz plane (y < 0)---------------------------------------
+    //! Remove Button: Removes all splats under the xz plane (y < 0)   8888
     events.on('splats.selectBelowXZ', () => {
         const splats = scene.getElementsByType(ElementType.splat);
         splats.forEach((splatElem) => {
@@ -812,7 +812,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         
     });
 
-    //! Remove2 Button: Removes all splats under the xz plane (y < 0)---------------------------------------
+    //! Remove2 Button: Removes all splats under the xz plane (y < 0)   8888
     events.on('splats.selectBelowXZ2', () => {
         const splats = scene.getElementsByType(ElementType.splat);
         splats.forEach((splatElem) => {
