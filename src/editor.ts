@@ -653,9 +653,9 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
 
         
-    //! Center and scale the selected splat to fit within ±0.5 units     8888
-    //? Button 1: Center button event handler-----------------------------------------
-    events.on('centerFit.selectedSplat', (targetY = -0.023) => {     // targetY definition
+    //! Center and scale the selected splat to fit within specified units
+    //? Unified center button event handler with scale parameter
+    events.on('centerFit.selectedSplat', (targetY = -0.023, scale = 0.5) => {
         const splat = events.invoke('selection');
         if (!splat) return;
     
@@ -667,10 +667,9 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         const maxExtent = Math.max(halfExtents.x, halfExtents.z);
         if (maxExtent === 0) return;
     
-        // Each small grid block is 0.1 units, so 5 blocks = 0.5 units
-        // Fit within -0.5 to +0.5 (total 1.0 units) on X and Z
-        const scale = 0.5 / maxExtent;
-        splat.entity.setLocalScale(scale, scale, scale);
+        // Calculate scale based on the provided scale parameter
+        const finalScale = scale / maxExtent;
+        splat.entity.setLocalScale(finalScale, finalScale, finalScale);
     
         // Recompute bounds after scaling
         splat.makeSelectionBoundDirty?.();
@@ -704,93 +703,20 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         events.fire('selection.changed', splat);
         events.fire('pivot.setOrigin', 'center'); // or 'boundCenter' if you want the bound center
     });
-
-
-    //? Button 2: Center button event handler-----------------------------------------
-
-    events.on('centerFit.selectedSplat2', (targetY = -0.023) => {     // targetY definition
-        const splat = events.invoke('selection');
-        if (!splat) return;
-    
-        // Get the local bounding box
-        const bound = splat.localBound;
-        const center = bound.center.clone();
-        const halfExtents = bound.halfExtents;
-        // Use X and Z for the xz plane
-        const maxExtent = Math.max(halfExtents.x, halfExtents.z);
-        if (maxExtent === 0) return;
-    
-        // Each small grid block is 0.1 units, so 5 blocks = 0.5 units
-        // Fit within -0.5 to +0.5 (total 1.0 units) on X and Z
-        const scale = 0.3 / maxExtent;
-        splat.entity.setLocalScale(scale, scale, scale);
-    
-        // Recompute bounds after scaling
-        splat.makeSelectionBoundDirty?.();
-        splat.updatePositions?.();
-    
-        // Now get the world bounding box center
-        const worldBound = splat.worldBound;
-        const worldCenter = worldBound.center.clone();
-    
-        // Offset the splat so the world center is at (0,0,0)
-        const currentPos = splat.entity.getLocalPosition();
-        splat.entity.setLocalPosition(
-            currentPos.x - worldCenter.x,
-            currentPos.y - worldCenter.y,
-            currentPos.z - worldCenter.z
-        );
-    
-        splat.makeSelectionBoundDirty?.();
-        splat.updatePositions?.();
-
-        // --- Move the splat so its lowest point sits on the xz plane (y=targetY) ---
-        const updatedWorldBound = splat.worldBound;
-        const bottomY = updatedWorldBound.center.y - updatedWorldBound.halfExtents.y;
-        if (Math.abs(bottomY - targetY) > 1e-6) { // avoid unnecessary move if already at targetY
-            const pos = splat.entity.getLocalPosition();
-            splat.entity.setLocalPosition(pos.x, pos.y - (bottomY - targetY), pos.z);
-            splat.makeSelectionBoundDirty?.();
-            splat.updatePositions?.();
-        }        
-        // Fire selection.changed to update the gizmo/pivot
-        events.fire('selection.changed', splat);
-        events.fire('pivot.setOrigin', 'center'); // or 'boundCenter' if you want the bound center
-    });
-
-
-
-
 
 
     //! Custom camera position event handler(Camera Button)     8888
     //? Camera 1 ----
-    events.on('camera.setCustomPosition', () => {
-        scene.camera.setFocalPoint(new Vec3(0, 0, 0), 0);
-        scene.camera.setAzimElev(0, -45, 0);
-        scene.camera.setDistance(0.39, 0);
-    });
-
-    //? Camera 2 ----
-    events.on('camera.setCustomPosition2', () => {
-        scene.camera.setFocalPoint(new Vec3(0, 0, 0), 0);
-        scene.camera.setAzimElev(0, -35, 0);
-        scene.camera.setDistance(0.39, 0);
-    });
-
-    //? Camera 3 ----
-    events.on('camera.setCustomPosition3', () => {
-        scene.camera.setFocalPoint(new Vec3(0, .2, 0), 0);
-        scene.camera.setAzimElev(0, -25, 0);
-        scene.camera.setDistance(0.50, 0);
+    events.on('camera.setCustomPosition', (a = 0, b = -45, c = 0.39) => {
+        scene.camera.setFocalPoint(new Vec3(0, a, 0), 0);   
+        scene.camera.setAzimElev(0, b, 0);
+        scene.camera.setDistance(c, 0);
     });
 
 
-
-
-
-    //! Remove Button: Removes all splats under the xz plane (y < 0)   8888
-    events.on('splats.selectBelowXZ', () => {
+    
+    //! Remove Button: Removes all splats under the xz plane (y < threshold)   8888
+    events.on('splats.selectBelowXZ', (removeTopCloud: boolean = false) => {
         const splats = scene.getElementsByType(ElementType.splat);
         splats.forEach((splatElem) => {
             const splat = splatElem as Splat;
@@ -798,7 +724,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
             // Create a filter function for SelectOp
             const filter = (i: number) => {
                 if (splat.calcSplatWorldPosition(i, tempVec)) {
-                    return tempVec.y < 0;       
+                    return removeTopCloud ?  tempVec.y < 0.06 || tempVec.y > 0.4 : tempVec.y < 0 ;       
                 }
                 return false;
             };
@@ -811,28 +737,6 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
         
     });
-
-    //! Remove2 Button: Removes all splats under the xz plane (y < 0)   8888
-    events.on('splats.selectBelowXZ2', () => {
-        const splats = scene.getElementsByType(ElementType.splat);
-        splats.forEach((splatElem) => {
-            const splat = splatElem as Splat;
-            const tempVec = new Vec3();
-            // Create a filter function for SelectOp
-            const filter = (i: number) => {
-                if (splat.calcSplatWorldPosition(i, tempVec)) {
-                    return tempVec.y < 0.06 || tempVec.y > 0.4;       
-                }
-                return false;
-            };
-            // Use the same selection operation as the brush tool
-            events.fire('edit.add', new SelectOp(splat, 'add', filter));
-        });
-        selectedSplats().forEach((splat) => {
-            editHistory.add(new DeleteSelectionOp(splat));
-        });
-    });
-
     
     
 };

@@ -217,7 +217,7 @@ class BottomToolbar extends Container {
         this.append(centerFitButton2);
         tooltips.register(centerFitButton2, 'Centers taller dishes within 3 units', 'top');
         centerFitButton2.on('click', () => {
-            events.fire('centerFit.selectedSplat2');
+            events.fire('centerFit.selectedSplat', -0.023, 0.3);
         });
         
 
@@ -245,7 +245,7 @@ class BottomToolbar extends Container {
         this.append(customCamera2Button);
         tooltips.register(customCamera2Button, 'Camera for Burgers/Lower angle', 'top');
         customCamera2Button.on('click', () => {
-            events.fire('camera.setCustomPosition2');
+            events.fire('camera.setCustomPosition', 0, -35, 0.39);
         });
 
         //! Camera 3 ----
@@ -258,7 +258,7 @@ class BottomToolbar extends Container {
         this.append(customCamera3Button);
         tooltips.register(customCamera3Button, 'Camera for glasses', 'top');
         customCamera3Button.on('click', () => {
-            events.fire('camera.setCustomPosition3');
+            events.fire('camera.setCustomPosition', 0.3, -25, 0.50);
         });
 
 
@@ -286,7 +286,7 @@ class BottomToolbar extends Container {
         this.append(removeBelowXZButton2);
         tooltips.register(removeBelowXZButton2, 'Removes cloud and extra wood from bottom', 'top');
         removeBelowXZButton2.on('click', () => {
-            events.fire('splats.selectBelowXZ2');
+            events.fire('splats.selectBelowXZ', true);
         });
  
         //! FInal STep Button: Automates a sequence of operations  8888 
