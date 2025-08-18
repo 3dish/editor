@@ -3,7 +3,7 @@ import { version as appVersion } from '../package.json';
 // export default null
 declare let self: ServiceWorkerGlobalScope;
 
-const cacheName = `superSplat-v${appVersion}`;
+const cacheName = `3dish-v${appVersion}`;
 
 const cacheUrls = [
     './',

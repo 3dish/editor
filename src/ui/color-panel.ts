@@ -237,10 +237,12 @@ class ColorPanel extends Container {
         let suppress = false;
         let selected: Splat = null;
         let op: SetSplatColorAdjustmentOp = null;
+        let isUpdatingFromSplat = false;
 
         const updateUIFromState = (splat: Splat) => {
             if (suppress) return;
             suppress = true;
+            isUpdatingFromSplat = true;
             tintPicker.value = splat ? [splat.tintClr.r, splat.tintClr.g, splat.tintClr.b] : [1, 1, 1];
             temperatureSlider.value = splat ? splat.temperature : 0;
             saturationSlider.value = splat ? splat.saturation : 0;
@@ -249,6 +251,7 @@ class ColorPanel extends Container {
             whitePointSlider.value = splat ? splat.whitePoint : 1;
             transparencySlider.value = splat ? Math.log(splat.transparency) : 0;
             suppress = false;
+            isUpdatingFromSplat = false;
         };
 
         const start = () => {
@@ -319,30 +322,90 @@ class ColorPanel extends Container {
             updateOp((op) => {
                 op.newState.tintClr.set(value[0], value[1], value[2]);
             });
+            // Save to session storage only if not updating from splat
+            if (!isUpdatingFromSplat) {
+                sessionStorage.setItem('supersplat_color_settings', JSON.stringify({ 
+                    brightness: brightnessSlider.value, 
+                    blackPoint: blackPointSlider.value,
+                    temperature: temperatureSlider.value,
+                    saturation: saturationSlider.value,
+                    whitePoint: whitePointSlider.value,
+                    transparency: Math.exp(transparencySlider.value),
+                    tintClr: { r: value[0], g: value[1], b: value[2] }
+                }));
+            }
         });
 
         temperatureSlider.on('change', (value: number) => {
             updateOp((op) => {
                 op.newState.temperature = value;
             });
+            // Save to session storage only if not updating from splat
+            if (!isUpdatingFromSplat) {
+                sessionStorage.setItem('supersplat_color_settings', JSON.stringify({ 
+                    brightness: brightnessSlider.value, 
+                    blackPoint: blackPointSlider.value,
+                    temperature: value,
+                    saturation: saturationSlider.value,
+                    whitePoint: whitePointSlider.value,
+                    transparency: Math.exp(transparencySlider.value),
+                    tintClr: { r: tintPicker.value[0], g: tintPicker.value[1], b: tintPicker.value[2] }
+                }));
+            }
         });
 
         saturationSlider.on('change', (value: number) => {
             updateOp((op) => {
                 op.newState.saturation = value;
             });
+            // Save to session storage only if not updating from splat
+            if (!isUpdatingFromSplat) {
+                sessionStorage.setItem('supersplat_color_settings', JSON.stringify({ 
+                    brightness: brightnessSlider.value, 
+                    blackPoint: blackPointSlider.value,
+                    temperature: temperatureSlider.value,
+                    saturation: value,
+                    whitePoint: whitePointSlider.value,
+                    transparency: Math.exp(transparencySlider.value),
+                    tintClr: { r: tintPicker.value[0], g: tintPicker.value[1], b: tintPicker.value[2] }
+                }));
+            }
         });
 
         brightnessSlider.on('change', (value: number) => {
             updateOp((op) => {
                 op.newState.brightness = value;
             });
+            // Save to session storage only if not updating from splat
+            if (!isUpdatingFromSplat) {
+                sessionStorage.setItem('supersplat_color_settings', JSON.stringify({ 
+                    brightness: value, 
+                    blackPoint: blackPointSlider.value,
+                    temperature: temperatureSlider.value,
+                    saturation: saturationSlider.value,
+                    whitePoint: whitePointSlider.value,
+                    transparency: Math.exp(transparencySlider.value),
+                    tintClr: { r: tintPicker.value[0], g: tintPicker.value[1], b: tintPicker.value[2] }
+                }));
+            }
         });
 
         blackPointSlider.on('change', (value: number) => {
             updateOp((op) => {
                 op.newState.blackPoint = value;
             });
+            // Save to session storage only if not updating from splat
+            if (!isUpdatingFromSplat) {
+                sessionStorage.setItem('supersplat_color_settings', JSON.stringify({ 
+                    brightness: brightnessSlider.value, 
+                    blackPoint: value,
+                    temperature: temperatureSlider.value,
+                    saturation: saturationSlider.value,
+                    whitePoint: whitePointSlider.value,
+                    transparency: Math.exp(transparencySlider.value),
+                    tintClr: { r: tintPicker.value[0], g: tintPicker.value[1], b: tintPicker.value[2] }
+                }));
+            }
 
             if (value > whitePointSlider.value) {
                 whitePointSlider.value = value;
@@ -353,6 +416,18 @@ class ColorPanel extends Container {
             updateOp((op) => {
                 op.newState.whitePoint = value;
             });
+            // Save to session storage only if not updating from splat
+            if (!isUpdatingFromSplat) {
+                sessionStorage.setItem('supersplat_color_settings', JSON.stringify({ 
+                    brightness: brightnessSlider.value, 
+                    blackPoint: blackPointSlider.value,
+                    temperature: temperatureSlider.value,
+                    saturation: saturationSlider.value,
+                    whitePoint: value,
+                    transparency: Math.exp(transparencySlider.value),
+                    tintClr: { r: tintPicker.value[0], g: tintPicker.value[1], b: tintPicker.value[2] }
+                }));
+            }
 
             if (value < blackPointSlider.value) {
                 blackPointSlider.value = value;
@@ -363,6 +438,18 @@ class ColorPanel extends Container {
             updateOp((op) => {
                 op.newState.transparency = Math.exp(value);
             });
+            // Save to session storage only if not updating from splat
+            if (!isUpdatingFromSplat) {
+                sessionStorage.setItem('supersplat_color_settings', JSON.stringify({ 
+                    brightness: brightnessSlider.value, 
+                    blackPoint: blackPointSlider.value,
+                    temperature: temperatureSlider.value,
+                    saturation: saturationSlider.value,
+                    whitePoint: whitePointSlider.value,
+                    transparency: Math.exp(value),
+                    tintClr: { r: tintPicker.value[0], g: tintPicker.value[1], b: tintPicker.value[2] }
+                }));
+            }
         });
 
         reset.on('click', () => {

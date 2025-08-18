@@ -2,6 +2,7 @@ import { Color, createGraphicsDevice } from 'playcanvas';
 
 import { registerCameraPosesEvents } from './camera-poses';
 import { registerDocEvents } from './doc';
+import { DataProcessor } from './data-processor';
 import { EditHistory } from './edit-history';
 import { registerEditorEvents } from './editor';
 import { Events } from './events';
@@ -15,6 +16,7 @@ import { registerSelectionEvents } from './selection';
 import { Shortcuts } from './shortcuts';
 import { registerTimelineEvents } from './timeline';
 import { BoxSelection } from './tools/box-selection';
+import { NewCropTool } from './tools/new-crop';
 import { BrushSelection } from './tools/brush-selection';
 import { LassoSelection } from './tools/lasso-selection';
 import { MoveTool } from './tools/move-tool';
@@ -26,6 +28,7 @@ import { SphereSelection } from './tools/sphere-selection';
 import { ToolManager } from './tools/tool-manager';
 import { registerTransformHandlerEvents } from './transform-handler';
 import { EditorUI } from './ui/editor';
+import { TiltDetectionTool } from './tools/tilt-detection';
 
 declare global {
     interface LaunchParams {
@@ -71,7 +74,7 @@ const initShortcuts = (events: Events) => {
 
     shortcuts.register(['Delete', 'Backspace'], { event: 'select.delete' });
     shortcuts.register(['Escape'], { event: 'tool.deactivate' });
-    shortcuts.register(['Tab'], { event: 'selection.next' });
+    shortcuts.register(['Tab'], { event: 'select.delete' });
     shortcuts.register(['1'], { event: 'tool.move', sticky: true });
     shortcuts.register(['2'], { event: 'tool.rotate', sticky: true });
     shortcuts.register(['3'], { event: 'tool.scale', sticky: true });
@@ -228,6 +231,9 @@ const main = async () => {
         context: maskContext
     };
 
+    // create data processor for auto-crop tool
+    const dataProcessor = new DataProcessor(scene.graphicsDevice);
+
     // tool manager
     const toolManager = new ToolManager(events);
     toolManager.register('rectSelection', new RectSelection(events, editorUI.toolsContainer.dom));
@@ -235,11 +241,13 @@ const main = async () => {
     toolManager.register('polygonSelection', new PolygonSelection(events, editorUI.toolsContainer.dom, mask));
     toolManager.register('lassoSelection', new LassoSelection(events, editorUI.toolsContainer.dom, mask));
     toolManager.register('sphereSelection', new SphereSelection(events, scene, editorUI.canvasContainer));
-    toolManager.register('smallSphereSelection', new SphereSelection(events, scene, editorUI.canvasContainer, 0.55, { x: 0, y: 0.099, z: 0 }));
+    toolManager.register('smallSphereSelection', new SphereSelection(events, scene, editorUI.canvasContainer, 0.53, { x: 0, y: 0.099, z: 0 }));
     toolManager.register('boxSelection', new BoxSelection(events, scene, editorUI.canvasContainer));
     toolManager.register('move', new MoveTool(events, scene));
     toolManager.register('rotate', new RotateTool(events, scene));
     toolManager.register('scale', new ScaleTool(events, scene));
+    toolManager.register('newApproach', new NewCropTool(events, dataProcessor, scene));
+    toolManager.register('tiltDetection', new TiltDetectionTool(events, dataProcessor, scene));
 
     editorUI.toolsContainer.dom.appendChild(maskCanvas);
 

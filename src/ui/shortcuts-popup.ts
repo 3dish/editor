@@ -24,7 +24,7 @@ const shortcutList = [
     { key: 'U', action: 'unhide-all-splats' },
     { key: 'D', action: 'toggle-data-panel' },
     { header: 'other' },
-    { key: 'Tab', action: 'select-next-splat' },
+    { key: 'Tab', action: 'delete-selected-splats' },
     { key: 'Ctrl + Z', action: 'undo' },
     { key: 'Ctrl + Shift + Z', action: 'redo' },
     { key: 'Space', action: 'toggle-splat-overlay' },

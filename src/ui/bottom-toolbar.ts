@@ -20,9 +20,10 @@ const createSvg = (svgString: string) => {
 };
 
 class BottomToolbar extends Container {
-    private collapsed = true;                 //!added for collapse/expand button
+    private collapsed = false;                 //!added for collapse/expand button
     private collapseButton: Button;            //!added for collapse/expand button                                   
-    private alwaysVisibleButtons: Button[];    //!added for collapse/expand button
+    private textButtons: Button[];             //!text buttons (Crop, Tilt, Sphere, etc.)
+    private iconButtons: Button[];             //!icon buttons (undo, redo, picker, etc.)
     constructor(events: Events, tooltips: Tooltips, args = {}) {
         args = {
             ...args,
@@ -70,7 +71,7 @@ class BottomToolbar extends Container {
         const sphere = new Button({
             id: 'bottom-toolbar-sphere',
             class: 'bottom-toolbar-button',
-            text: 'Sphere1'
+            text: 'Sphere'
         });
 
         const box = new Button({
@@ -113,7 +114,7 @@ class BottomToolbar extends Container {
             icon: 'E189'
         });
 
-        //! Collapse/Expand button added(styled like menu bar)/////////////////
+        //! Collapse/Expand button added(styled like menu bar)  8888
         this.collapseButton = new Button({
             id: 'bottom-toolbar-collapse',
             class: 'bottom-toolbar-button',
@@ -147,6 +148,7 @@ class BottomToolbar extends Container {
         this.append(lasso);
         this.append(polygon);
         this.append(brush);
+        
         this.append(new Element({ class: 'bottom-toolbar-separator' }));
         this.append(box);
         this.append(new Element({ class: 'bottom-toolbar-separator' }));
@@ -156,57 +158,79 @@ class BottomToolbar extends Container {
         this.append(coordSpace);
         this.append(origin);
 
+
+        //! Add Crop button next to Sphere1  8888
+        const CropButton = new Button({
+            id: 'bottom-toolbar-new-approach',
+            class: 'bottom-toolbar-button',
+            text: 'Crop Wood'
+        });
+        this.append(CropButton);
+        tooltips.register(CropButton, 'Crop extra wood from the sides of the dish', 'top');
+        CropButton.dom.addEventListener('click', () => events.fire('tool.newApproach'));
+
+        //! Add Tilt Detection button  8888
+        const tiltButton = new Button({
+            id: 'bottom-toolbar-tilt-detection',
+            class: 'bottom-toolbar-button',
+            text: 'Fix Tilt'
+        });
+        this.append(tiltButton);
+        tooltips.register(tiltButton, 'Fix tilted dishes', 'top');
+        tiltButton.dom.addEventListener('click', () => events.fire('tool.tiltDetection'));
+
+
         // Move sphere button here, just before Center1
         this.append(sphere);
 
-        //! Add Small Sphere button UI
+        //! Add Small Sphere button UI  8888
         const smallSphere = new Button({
             id: 'bottom-toolbar-small-sphere',
             class: 'bottom-toolbar-button',
-            text: 'Sphere2'
+            text: 'Clean Cloud'
         });
         // smallSphere.dom.appendChild(createSvg(sphereSvg)); // Removed icon
         this.append(smallSphere);
-        tooltips.register(smallSphere, 'Small Sphere Select');
+        tooltips.register(smallSphere, 'Small Sphere for removing clouds', 'top');
         smallSphere.dom.addEventListener('click', () => events.fire('tool.smallSphereSelection'));
 
-        //! First Center button
+        //! First Center button  8888
         const centerFitButton = new Button({
             id: 'bottom-toolbar-center-fit',
             class: 'bottom-toolbar-button',
-            text: 'Center1'
+            text: 'Center Dish'
         });
         centerFitButton.dom.classList.add('toolbar-center-btn');
         this.append(centerFitButton);
-        tooltips.register(centerFitButton, localize('center-fit.tooltip'));
+        tooltips.register(centerFitButton, 'Centers dishes within 5 units', 'top');
         centerFitButton.on('click', () => {
             events.fire('centerFit.selectedSplat');
         });
 
-        //! Second Center button
-        const centerFitButton2 = new Button({
+        //! Second Center button  8888
+        const centerFitButton2 = new Button({       
             id: 'bottom-toolbar-center-fit',
             class: 'bottom-toolbar-button',
-            text: 'Center2'
+            text: 'Small Center'
         });
         centerFitButton2.dom.classList.add('toolbar-center-btn');
         this.append(centerFitButton2);
-        tooltips.register(centerFitButton2, localize('center-fit.tooltip'));
+        tooltips.register(centerFitButton2, 'Centers taller dishes within 3 units', 'top');
         centerFitButton2.on('click', () => {
-            events.fire('centerFit.selectedSplat2');
+            events.fire('centerFit.selectedSplat', -0.023, 0.3);
         });
         
 
-        //! Custom Camera Position buttons
+        //! Custom Camera Position buttons  8888
         //! Camera 1 ----
         const customCamera1Button = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
-            text: 'Cam1'
+            text: 'Dish Cam'
         });
         customCamera1Button.dom.classList.add('toolbar-camera-btn');
         this.append(customCamera1Button);
-        tooltips.register(customCamera1Button, 'Set Camera');
+        tooltips.register(customCamera1Button, 'Primary Camera for most dishes', 'top');
         customCamera1Button.on('click', () => {
             events.fire('camera.setCustomPosition');
         });
@@ -215,86 +239,86 @@ class BottomToolbar extends Container {
         const customCamera2Button = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
-            text: 'Cam2'
+            text: 'Burger Cam'
         });
         customCamera2Button.dom.classList.add('toolbar-camera-btn');
         this.append(customCamera2Button);
-        tooltips.register(customCamera2Button, 'Set Camera');
+        tooltips.register(customCamera2Button, 'Camera for Burgers/Lower angle', 'top');
         customCamera2Button.on('click', () => {
-            events.fire('camera.setCustomPosition2');
+            events.fire('camera.setCustomPosition', 0, -35, 0.39);
         });
 
         //! Camera 3 ----
         const customCamera3Button = new Button({
             id: 'bottom-toolbar-custom-camera',
             class: 'bottom-toolbar-button',
-            text: 'Cam3'
+            text: 'Drink Cam'
         });
         customCamera3Button.dom.classList.add('toolbar-camera-btn');
         this.append(customCamera3Button);
-        tooltips.register(customCamera3Button, 'Set Camera');
+        tooltips.register(customCamera3Button, 'Camera for glasses', 'top');
         customCamera3Button.on('click', () => {
-            events.fire('camera.setCustomPosition3');
+            events.fire('camera.setCustomPosition', 0.3, -25, 0.50);
         });
 
 
 
-        //! Remove Button: Removes all splats under the xz plane (y < 0)---------------------------------------
+        //! Remove Button: Removes all splats under the xz plane (y < 0)   8888
         const removeBelowXZButton = new Button({
             id: 'bottom-toolbar-remove-below-xz',
             class: 'bottom-toolbar-button',
-            text: 'Remove'
+            text: 'Remove Bottom'
         });
         removeBelowXZButton.dom.classList.add('toolbar-remove-btn');
         this.append(removeBelowXZButton);
-        tooltips.register(removeBelowXZButton, 'Remove all splats below the XZ plane (y < 0)');
+        tooltips.register(removeBelowXZButton, 'Remove splats below the y < 0', 'top');
         removeBelowXZButton.on('click', () => {
             events.fire('splats.selectBelowXZ');
         });
 
+        //! Step 1 Button: Second remove button  8888
+        const removeBelowXZButton2 = new Button({
+            id: 'bottom-toolbar-remove-below-xz-2',
+            class: 'bottom-toolbar-button',
+            text: 'Step 1'
+        });
+        removeBelowXZButton2.dom.classList.add('toolbar-step-btn');
+        this.append(removeBelowXZButton2);
+        tooltips.register(removeBelowXZButton2, 'Removes cloud and extra wood from bottom', 'top');
+        removeBelowXZButton2.on('click', () => {
+            events.fire('splats.selectBelowXZ', true);
+        });
+ 
+        //! FInal STep Button: Automates a sequence of operations  8888 
+        const finishButton = new Button({
+            id: 'bottom-toolbar-finish',
+            class: 'bottom-toolbar-button',
+            text: 'Final Step'
+        });
+        finishButton.dom.classList.add('toolbar-finish-btn');
+        this.append(finishButton);
+        tooltips.register(finishButton, 'Finishes rest of the workflow', 'top');
+        finishButton.on('click', async () => {
+            // Execute the sequence: Center1 -> Tilt -> Center1 -> Crop -> Delete key -> Center1
+            events.fire('centerFit.selectedSplat'); // Center1
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
+            events.fire('tool.tiltDetection'); // Tilt
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            events.fire('centerFit.selectedSplat'); // Center1
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
+            events.fire('tool.newApproach'); // Crop
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            events.fire('select.delete'); // Delete key
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
+            events.fire('centerFit.selectedSplat'); // Center1
+        });
 
-        // Rings Button to remove rings below certain y value
-        // const ringsButton = new Button({
-        //     id: 'bottom-toolbar-rings',
-        //     class: 'bottom-toolbar-button',
-        //     text: 'Rings'
-        // });
-        // ringsButton.dom.classList.add('toolbar-rings-btn');
-        // this.append(ringsButton);
-        // tooltips.register(ringsButton, 'Show/Hide Rings');
 
-
-        // let repeatCount = 10; // Or any number you find sufficient
-
-        // function repeatSelectDelete(times) {
-        //     if (times <= 0) return;
-        //     events.fire('select.rect', 'set', {
-        //         start: { x: 0, y: 0.65 },
-        //         end: { x: 1, y: 1 }
-        //     });
-        //     setTimeout(() => {
-        //         events.fire('select.delete');
-        //         setTimeout(() => {
-        //             repeatSelectDelete(times - 1);
-        //         }, 20); // Delay to allow deletion to process
-        //     }, 20); // Delay to allow selection to register
-        // }
-
-        // // Usage in your button:
-        // ringsButton.on('click', () => {
-        //     events.fire('camera.toggleMode');
-        //     events.fire('camera.setOverlay', true);
-        //     events.fire('camera.setPose', {
-        //         position: { x: 0, y: .1, z: 2 },
-        //         target: { x: 0, y: .1, z: 0 }
-        //     });
-        //     events.fire('camera.align', 'pz');
-        //     setTimeout(() => {
-        //         repeatSelectDelete(10); // Repeat 10 times
-        //         events.fire('camera.toggleMode');
-        //         events.fire('camera.toggleOverlay')
-        //     }, 50); // Delay to allow camera to update
-        // });
 
         undo.dom.addEventListener('click', () => events.fire('edit.undo'));
         redo.dom.addEventListener('click', () => events.fire('edit.redo'));
@@ -338,26 +362,26 @@ class BottomToolbar extends Container {
         });
 
         // register tooltips
-        tooltips.register(undo, localize('tooltip.undo'));
-        tooltips.register(redo, localize('tooltip.redo'));
-        tooltips.register(picker, localize('tooltip.picker'));
-        tooltips.register(brush, localize('tooltip.brush'));
-        tooltips.register(polygon, localize('tooltip.polygon'));
-        tooltips.register(lasso, 'Lasso Select');
-        tooltips.register(sphere, localize('tooltip.sphere'));
-        tooltips.register(box, localize('tooltip.box'));
+        tooltips.register(undo, localize('tooltip.undo'), 'top');
+        tooltips.register(redo, localize('tooltip.redo'), 'top');
+        tooltips.register(picker, localize('tooltip.picker'), 'top');
+        tooltips.register(brush, localize('tooltip.brush'), 'top');
+        tooltips.register(polygon, localize('tooltip.polygon'), 'top');
+        tooltips.register(lasso, 'Lasso Select', 'top');
+        tooltips.register(sphere, localize('tooltip.sphere'), 'top');
+        tooltips.register(box, localize('tooltip.box'), 'top');
         // tooltips.register(crop, 'Crop');
-        tooltips.register(translate, localize('tooltip.translate'));
-        tooltips.register(rotate, localize('tooltip.rotate'));
-        tooltips.register(scale, localize('tooltip.scale'));
-        tooltips.register(coordSpace, localize('tooltip.local-space'));
-        tooltips.register(origin, localize('tooltip.bound-center'));
+        tooltips.register(translate, localize('tooltip.translate'), 'top');
+        tooltips.register(rotate, localize('tooltip.rotate'), 'top');
+        tooltips.register(scale, localize('tooltip.scale'), 'top');
+        tooltips.register(coordSpace, localize('tooltip.local-space'), 'top');
+        tooltips.register(origin, localize('tooltip.bound-center'), 'top');
 
 
 
-        //! Store always-visible buttons for collapse logic
-        this.alwaysVisibleButtons = [
-            this.collapseButton,
+        //! Store text buttons (Crop, Tilt, Sphere, Center, Cam, Remove, Finish) - excluding toggle button  8888
+        this.textButtons = [
+            CropButton,
             sphere,
             smallSphere,
             centerFitButton,
@@ -365,32 +389,107 @@ class BottomToolbar extends Container {
             customCamera1Button,
             customCamera2Button,
             customCamera3Button,
-            removeBelowXZButton
+            removeBelowXZButton,
+            removeBelowXZButton2,
+            tiltButton,
+            finishButton
         ];
-        // Add always-visible class for CSS
-        for (const btn of this.alwaysVisibleButtons) {
-            btn.class.add('always-visible');
-        }
 
-        // Ensure toolbar starts collapsed
+        console.log('Text buttons count:', this.textButtons.length);
+        this.textButtons.forEach(btn => console.log('Text button:', btn.text));
+
+        // Add wider padding class to text buttons
+        this.textButtons.forEach(btn => {
+            btn.class.add('text-button-wide');
+        });
+
+        //! Store icon buttons (undo, redo, picker, lasso, polygon, brush, box, translate, rotate, scale, coordSpace, origin)  8888
+        this.iconButtons = [
+            undo,
+            redo,
+            picker,
+            lasso,
+            polygon,
+            brush,
+            box,
+            translate,
+            rotate,
+            scale,
+            coordSpace,
+            origin
+        ];
+
+        console.log('Icon buttons count:', this.iconButtons.length);
+
+        // Ensure toolbar starts with text buttons visible, icon buttons hidden
+        console.log('Initial state - collapsed =', this.collapsed);
+        
+        // Debug: Check if all buttons are properly categorized
+        const allButtons = [
+            undo, redo, picker, lasso, polygon, brush, box, translate, rotate, scale, coordSpace, origin,
+            CropButton, sphere, smallSphere, centerFitButton, centerFitButton2, customCamera1Button, 
+            customCamera2Button, customCamera3Button, removeBelowXZButton, removeBelowXZButton2, tiltButton, finishButton
+        ];
+        
+        console.log('Total buttons in toolbar:', allButtons.length);
+        console.log('Text buttons in array:', this.textButtons.length);
+        console.log('Icon buttons in array:', this.iconButtons.length);
+        
+        // Check for any buttons that might not be in either array
+        const categorizedButtons = [...this.textButtons, ...this.iconButtons];
+        const uncategorizedButtons = allButtons.filter(btn => !categorizedButtons.includes(btn));
+        if (uncategorizedButtons.length > 0) {
+            console.warn('Uncategorized buttons found:', uncategorizedButtons.length);
+        }
+        
         this.applyCollapseState();
+        
+        // Double-check initial state
+        console.log('After applyCollapseState:');
+        this.textButtons.forEach(btn => {
+            console.log('Text button', btn.text, 'display =', btn.dom.style.display);
+        });
+        this.iconButtons.forEach(btn => {
+            console.log('Icon button display =', btn.dom.style.display);
+        });
     }
 
-    //! Apply collapse to the toolbar
+    //! Apply collapse to the toolbar  8888 
     applyCollapseState() {
-        this.dom.classList.toggle('collapsed', this.collapsed);
+        console.log('applyCollapseState called, collapsed =', this.collapsed);
+        
         this.collapseButton.dom.innerHTML = '';
         const icon = createSvg(collapseSvg);
         icon.classList.add('menu-icon');
         icon.style.transform = this.collapsed ? 'rotate(180deg)' : '';
         this.collapseButton.dom.appendChild(icon);
-        Array.from(this.dom.children).forEach((child: HTMLElement) => {
-            const btn = (child as any).ui;
-            if (btn instanceof Button && !this.alwaysVisibleButtons.includes(btn)) {
-                btn.hidden = this.collapsed;
+        
+        // Ensure toggle button is always visible
+        this.collapseButton.hidden = false;
+        
+        // Switch between text buttons and icon buttons
+        this.textButtons.forEach(btn => {
+            if (this.collapsed) {
+                btn.dom.style.setProperty('display', 'none', 'important'); // Hide text buttons when collapsed=true
+            } else {
+                btn.dom.style.setProperty('display', 'inline-flex', 'important'); // Show text buttons when collapsed=false
             }
+            console.log('Text button', btn.text, 'display =', btn.dom.style.display);
+        });
+        
+        this.iconButtons.forEach(btn => {
+            if (!this.collapsed) {
+                btn.dom.style.setProperty('display', 'none', 'important'); // Hide icon buttons when collapsed=false
+            } else {
+                btn.dom.style.setProperty('display', 'inline-flex', 'important'); // Show icon buttons when collapsed=true
+            }
+            console.log('Icon button display =', btn.dom.style.display);
+        });
+        
+        // Handle separators - hide them when showing only text buttons
+        Array.from(this.dom.children).forEach((child: HTMLElement) => {
             if (child.classList && child.classList.contains('bottom-toolbar-separator')) {
-                child.style.display = this.collapsed ? 'none' : '';
+                child.style.display = this.collapsed ? '' : 'none';
             }
         });
     }

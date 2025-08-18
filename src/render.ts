@@ -121,7 +121,10 @@ const registerRenderEvents = (scene: Scene, events: Events) => {
 
             // construct filename
             const selected = events.invoke('selection') as Splat;
-            const filename = `${removeExtension(selected?.name ?? 'SuperSplat')}.png`;      //"-image" removed
+            const baseName = removeExtension(selected?.name ?? 'SuperSplat');
+            // Add "_hd" suffix for high-resolution exports (1200x1200px)
+            const suffix = (width === 1200 && height === 1200) ? '_hd' : '';
+            const filename = `${baseName}${suffix}.png`;
 
             // download
             downloadFile(arrayBuffer, filename);

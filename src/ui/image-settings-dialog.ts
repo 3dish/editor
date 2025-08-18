@@ -144,6 +144,8 @@ class ImageSettingsDialog extends Container {
             resolutionValue.value = [widths[presetSelect.value], heights[presetSelect.value]];
         };
 
+
+
         presetSelect.on('change', () => {
             resolutionRow.enabled = presetSelect.value === 'custom';
 
@@ -182,7 +184,7 @@ class ImageSettingsDialog extends Container {
         // function implementations
 
         //this.show = () => {
-        this.show = (initial?: { width?: number, height?: number, transparentBg?: boolean, preset?: string }) => {
+            this.show = (initial?: { width?: number, height?: number, transparentBg?: boolean, preset?: string }) => {
             targetSize = events.invoke('targetSize');
 
             reset();
@@ -200,6 +202,7 @@ class ImageSettingsDialog extends Container {
                 if (initial.transparentBg !== undefined) {
                     transparentBgBoolean.value = initial.transparentBg;
                 }
+
             }
 
             this.hidden = false;
@@ -218,7 +221,7 @@ class ImageSettingsDialog extends Container {
                         width,
                         height,
                         transparentBg: transparentBgBoolean.value,
-                        showDebug: showDebugBoolean.value
+                        showDebug: showDebugBoolean.value,
                     };
 
                     resolve(imageSettings);

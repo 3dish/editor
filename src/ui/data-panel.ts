@@ -328,13 +328,13 @@ class DataPanel extends Panel {
 
         // highlight
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('id', 'histogram-svg');
+        //svg.setAttribute('id', 'histogram-svg');
 
         // create rect element
         const rect = document.createElementNS(svg.namespaceURI, 'rect') as SVGRectElement;
         rect.setAttribute('id', 'highlight-rect');
         rect.setAttribute('fill', 'rgba(255, 102, 0, 0.2)');
-        rect.setAttribute('stroke', '#f60');
+        rect.setAttribute('stroke', '#8b81cc');
         rect.setAttribute('stroke-width', '1');
         rect.setAttribute('stroke-dasharray', '5, 5');
 

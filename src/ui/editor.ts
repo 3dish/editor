@@ -1,7 +1,7 @@
 import { Container, Label, Button } from 'pcui';  //! Added for File Selector feature
 import { Mat4, Vec3 } from 'playcanvas';
 
-import { DataPanel } from './data-panel';
+
 import { Events } from '../events';
 import { BottomToolbar } from './bottom-toolbar';
 import { ColorPanel } from './color-panel';
@@ -9,7 +9,7 @@ import { ImageSettingsDialog } from './image-settings-dialog';
 import { localize, localizeInit } from './localization';
 import { Menu } from './menu';
 import { ModeToggle } from './mode-toggle';
-import logo from './playcanvas-logo.png';
+import logo from './3dish-logo.png';
 import { Popup, ShowOptions } from './popup';
 import { PublishSettingsDialog } from './publish-settings-dialog';
 import { RightToolbar } from './right-toolbar';
@@ -69,7 +69,7 @@ class EditorUI {
         // app label
         const appLabel = new Label({
             id: 'app-label',
-            text: `SUPERSPLAT v${version}`
+            text: `3Dish Editor v${version}`
         });
 
         // cursor label
@@ -121,7 +121,7 @@ class EditorUI {
         const modeToggle = new ModeToggle(events, tooltips);
         const menu = new Menu(events);
 
-        //! --- Folder selection UI ---
+        //! --- Folder selection UI ---  8888
         // Create a button at the bottom left corner
         const selectFolderButton = document.createElement('button');
         selectFolderButton.textContent = 'Select Folder';
@@ -146,7 +146,7 @@ class EditorUI {
         document.body.appendChild(selectFolderButton);
 
 
-        //! Create a "Next" button next to the Select Folder button
+        //! Create a "Next" button next to the Select Folder button  8888
         const nextButton = document.createElement('button');
         nextButton.textContent = 'Next File';
         nextButton.style.position = 'fixed';
@@ -169,7 +169,7 @@ class EditorUI {
         });
         document.body.appendChild(nextButton);
 
-        //! --- File counter display box UI ---
+        //! --- File counter display box UI ---  8888
         const fileCounterBox = document.createElement('div');
         fileCounterBox.style.position = 'fixed';
         fileCounterBox.style.left = '36px';
@@ -190,7 +190,7 @@ class EditorUI {
         fileCounterBox.textContent = 'No file selected';
         document.body.appendChild(fileCounterBox);
 
-        //! --- File search input and Go button ---
+        //! --- File search input and Go button ---  8888
         const fileSearchContainer = document.createElement('div');
         fileSearchContainer.style.position = 'fixed';
         fileSearchContainer.style.left = '36px';
@@ -268,7 +268,7 @@ class EditorUI {
             }
         });
 
-        //! --- Folder path display box UI ---
+        //! --- Folder path display box UI ---  8888
         const folderPathBox = document.createElement('div');
         folderPathBox.style.position = 'fixed';
         folderPathBox.style.left = '36px';
@@ -298,7 +298,7 @@ class EditorUI {
             }
         }
 
-        //! --- Folder selection logic ---
+        //! --- Folder selection logic ---  8888
         let folderFiles: File[] = [];
         let currentFileIndex = 0;
 
@@ -394,9 +394,35 @@ class EditorUI {
             updateFileCounter();
         }
 
-        //! Next button logic
+        //! Next button logic  8888     
         nextButton.addEventListener('click', () => {
             if (currentFileIndex < folderFiles.length - 1) {
+                // Save current splat's color settings before clearing
+                const currentSplats = events.invoke('scene.splats');
+                if (currentSplats && currentSplats.length > 0) {
+                    const currentSplat = currentSplats[0];
+                    console.log('Saving color settings:', {
+                        brightness: currentSplat.brightness,
+                        blackPoint: currentSplat.blackPoint,
+                        temperature: currentSplat.temperature,
+                        saturation: currentSplat.saturation,
+                        whitePoint: currentSplat.whitePoint,
+                        transparency: currentSplat.transparency,
+                        tintClr: { r: currentSplat.tintClr.r, g: currentSplat.tintClr.g, b: currentSplat.tintClr.b }
+                    });
+                    sessionStorage.setItem('supersplat_color_settings', JSON.stringify({
+                        brightness: currentSplat.brightness,
+                        blackPoint: currentSplat.blackPoint,
+                        temperature: currentSplat.temperature,
+                        saturation: currentSplat.saturation,
+                        whitePoint: currentSplat.whitePoint,
+                        transparency: currentSplat.transparency,
+                        tintClr: { r: currentSplat.tintClr.r, g: currentSplat.tintClr.g, b: currentSplat.tintClr.b }
+                    }));
+                } else {
+                    console.log('No current splats found');
+                }
+                
                 events.fire('scene.clear');
                 events.fire('camera.reset');
                 events.fire('doc.setName', null);
@@ -446,11 +472,9 @@ class EditorUI {
         });
 
         //onst timelinePanel = new TimelinePanel(events, tooltips);
-        const dataPanel = new DataPanel(events);
 
         mainContainer.append(canvasContainer);
         //mainContainer.append(timelinePanel);
-        mainContainer.append(dataPanel);
 
         editorContainer.append(mainContainer);
 
@@ -545,7 +569,7 @@ class EditorUI {
             return this.popup.show({
                 type: 'info',
                 header: 'About',
-                message: `SUPERSPLAT v${version}`
+                message: `3Dish Editor v${version}`
             });
         });
 

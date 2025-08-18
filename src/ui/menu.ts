@@ -50,7 +50,7 @@ class Menu extends Container {
         iconDom.src = logoPng;   //3dish logo
         iconDom.setAttribute('id', 'app-icon');
         iconDom.addEventListener('pointerdown', (event) => {
-            window.open('https://playcanvas.com', '_blank').focus();
+            window.open('https://3dishviewer.app/', '_blank').focus();
         });
 
         const icon = new Element({
@@ -77,7 +77,7 @@ class Menu extends Container {
             class: 'menu-option'
         });
 
-        //! Export Splat button
+        //! Export Splat button  8888   
         const exportLabel = new Label({
             text: 'Export Splat',
             class: 'menu-option'
@@ -87,9 +87,9 @@ class Menu extends Container {
             events.invoke('scene.export', 'splat');
         });
 
-        //! Image Export button
+        //! Image Export button  8888
         const quickImageRender = new Label({
-            text: 'Image Export',
+            text: 'Thumbnail Export',
             class: 'menu-option'
         });
         quickImageRender.dom.classList.add('menu-option-persistent'); //added for persistent button
@@ -97,7 +97,17 @@ class Menu extends Container {
             events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 320, height: 320, transparentBg: true });
         });
 
-        //! Delete Workspace button
+        //! High Res Image Export button (1200x1200px)  8888
+        const highResImageRender = new Label({
+            text: 'HD Image Export',
+            class: 'menu-option'
+        });
+        highResImageRender.dom.classList.add('menu-option-persistent'); //added for persistent button
+        highResImageRender.on('click', () => {
+            events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 1200, height: 1200, transparentBg: true });
+        });
+
+        //! Delete Workspace button  8888
         const resetWorkspaceLabel = new Label({
             text: 'Delete',
             class: 'menu-option'
@@ -137,6 +147,7 @@ class Menu extends Container {
         buttonsContainer.append(arrow);
         buttonsContainer.append(exportLabel);
         buttonsContainer.append(quickImageRender);
+        buttonsContainer.append(highResImageRender);
         buttonsContainer.append(resetWorkspaceLabel);
         buttonsContainer.append(collapse);
         buttonsContainer.append(arrow);

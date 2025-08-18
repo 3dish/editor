@@ -147,14 +147,46 @@ const initFileHandler = (scene: Scene, events: Events, dropTarget: HTMLElement, 
                 const model = await scene.assetLoader.loadModel({ url, filename, animationFrame });
                 scene.add(model);
 
-                //! Set brightness and blackPoint to 0 for splat file type
+                // Simple helper to get stored color settings
+                const getStoredColorSettings = () => {
+                    try {
+                        const stored = sessionStorage.getItem('3dish_color_settings');
+                        return stored ? JSON.parse(stored) : null;
+                    } catch (e) {
+                        return null;
+                    }
+                };
+
+                //! Set all color settings to stored values or defaults
                 if (lowerFilename.endsWith('.splat')) {
-                    model._brightness = 0;
-                    model._blackPoint = 0;
+                    //model._brightness = 0;
+                    //model._blackPoint = 0;
+                    const stored = getStoredColorSettings();
+                    console.log('Loading color settings for splat:', stored);
+                    model._brightness = stored?.brightness ?? 0;
+                    model._blackPoint = stored?.blackPoint ?? 0;
+                    model._temperature = stored?.temperature ?? 0;
+                    model._saturation = stored?.saturation ?? 1;
+                    model._whitePoint = stored?.whitePoint ?? 1;
+                    model._transparency = stored?.transparency ?? 1;
+                    if (stored?.tintClr) {
+                        model.tintClr.set(stored.tintClr.r, stored.tintClr.g, stored.tintClr.b);
+                    }
                     events.fire('selection.changed', model);
                 } else if (lowerFilename.endsWith('.ply')) {
-                    model._brightness = 0.1;
-                    model._blackPoint = 0.1; 
+                    //model._brightness = 0.1;
+                    //model._blackPoint = 0.1; 
+                    const stored = getStoredColorSettings();
+                    console.log('Loading color settings for ply:', stored);
+                    model._brightness = stored?.brightness ?? 0.1;
+                    model._blackPoint = stored?.blackPoint ?? 0.1; 
+                    model._temperature = stored?.temperature ?? 0;
+                    model._saturation = stored?.saturation ?? 1;
+                    model._whitePoint = stored?.whitePoint ?? 1;
+                    model._transparency = stored?.transparency ?? 1;
+                    if (stored?.tintClr) {
+                        model.tintClr.set(stored.tintClr.r, stored.tintClr.g, stored.tintClr.b);
+                    }
                     events.fire('selection.changed', model);
                 }
 

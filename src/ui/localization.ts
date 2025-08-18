@@ -55,7 +55,7 @@ const localizeInit = () => {
                     'help.basics-video': 'Grundlagen Video',
                     'help.discord': 'Discord Server',
                     'help.forum': 'Forum',
-                    'help.about': 'Über SuperSplat',
+                    'help.about': 'Über 3Dish',
 
                     // Modes
                     'mode.centers': 'Punkt Modus',
@@ -289,7 +289,7 @@ const localizeInit = () => {
                     'help.basics-video': 'Basics Video',
                     'help.discord': 'Discord Server',
                     'help.forum': 'Forum',
-                    'help.about': 'About SuperSplat',
+                    'help.about': 'About 3Dish',
 
                     // Modes
                     'mode.centers': 'Centers Mode',
@@ -345,7 +345,7 @@ const localizeInit = () => {
                     'colors.reset': 'Reset',
 
                     // Data panel
-                    'data': 'SPLAT DATA',
+                    'data': 'SPLAT DATA2',
                     'data.distance': 'Distance',
                     'data.volume': 'Volume',
                     'data.surface-area': 'Surface Area',
@@ -543,7 +543,7 @@ const localizeInit = () => {
                     'help.basics-video': 'Vidéo de base',
                     'help.discord': 'Serveur Discord',
                     'help.forum': 'Forum',
-                    'help.about': 'À propos de SuperSplat',
+                    'help.about': 'À propos de 3Dish',
 
                     // Modes
                     'mode.centers': 'Mode centres',
@@ -776,7 +776,7 @@ const localizeInit = () => {
                     'help.basics-video': '基本ビデオ',
                     'help.discord': 'Discordサーバー',
                     'help.forum': 'フォーラム',
-                    'help.about': 'SuperSplatについて',
+                    'help.about': '3Dishについて',
 
                     // Modes
                     'mode.centers': 'センターモード',
@@ -1009,7 +1009,7 @@ const localizeInit = () => {
                     'help.basics-video': '기본 비디오',
                     'help.discord': 'Discord 서버',
                     'help.forum': '포럼',
-                    'help.about': 'SuperSplat 정보',
+                    'help.about': '3Dish 정보',
 
                     // Modes
                     'mode.centers': '센터 모드',
@@ -1241,7 +1241,7 @@ const localizeInit = () => {
                     'help.basics-video': '基础视频',
                     'help.discord': 'Discord 服务器',
                     'help.forum': '论坛',
-                    'help.about': '关于 SuperSplat',
+                    'help.about': '关于 3Dish',
 
                     // Modes
                     'mode.centers': '中心模式',
