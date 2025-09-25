@@ -734,8 +734,179 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         selectedSplats().forEach((splat) => {
             editHistory.add(new DeleteSelectionOp(splat));
         });
-
         
+    });
+
+    //! Size Filter: Removes all splats bigger than specified threshold   8888
+    events.on('splats.deleteBiggerThan', (sizeThreshold: number, method: string = 'volume') => {
+        const splats = scene.getElementsByType(ElementType.splat);
+        splats.forEach((splatElem) => {
+            const splat = splatElem as Splat;
+            
+            // Get scale data arrays
+            const sx = splat.splatData.getProp('scale_0');
+            const sy = splat.splatData.getProp('scale_1');
+            const sz = splat.splatData.getProp('scale_2');
+            
+            // Create a filter function for SelectOp
+            const filter = (i: number) => {
+                // Convert log scale values to actual scale values
+                const scaleX = Math.exp(sx[i]);
+                const scaleY = Math.exp(sy[i]);
+                const scaleZ = Math.exp(sz[i]);
+                
+                let size: number;
+                
+                switch (method) {
+                    case 'volume':
+                        // Calculate volume (size) of the splat
+                        size = scaleX * scaleY * scaleZ;
+                        break;
+                    case 'maxDimension':
+                        // Use maximum dimension
+                        size = Math.max(scaleX, scaleY, scaleZ);
+                        break;
+                    case 'averageDimension':
+                        // Use average dimension
+                        size = (scaleX + scaleY + scaleZ) / 3;
+                        break;
+                    default:
+                        size = scaleX * scaleY * scaleZ; // Default to volume
+                }
+                
+                // Return true if splat is bigger than threshold
+                return size > sizeThreshold;
+            };
+            
+            // Use the same selection operation as other tools
+            events.fire('edit.add', new SelectOp(splat, 'add', filter));
+        });
+        
+        // Delete all selected splats
+        selectedSplats().forEach((splat) => {
+            editHistory.add(new DeleteSelectionOp(splat));
+        });
+    });
+
+    //! Density Filter: Removes splats in low density areas (Optimized)   8888
+    events.on('splats.deleteLowDensity', (minNeighbors: number, searchRadius: number = 0.1) => {
+        const splats = scene.getElementsByType(ElementType.splat);
+        
+        splats.forEach((splatElem) => {
+            const splat = splatElem as Splat;
+            
+            // Get position data arrays
+            const px = splat.splatData.getProp('x');
+            const py = splat.splatData.getProp('y');
+            const pz = splat.splatData.getProp('z');
+            
+            const numSplats = splat.splatData.numSplats;
+            console.log(`Processing ${numSplats} splats for density filter...`);
+            
+            // Create a spatial grid for faster neighbor lookup
+            const gridSize = searchRadius * 2; // Each grid cell is 2x the search radius
+            const spatialGrid = new Map<string, number[]>();
+            
+            // Populate spatial grid
+            for (let i = 0; i < numSplats; i++) {
+                const gridX = Math.floor(px[i] / gridSize);
+                const gridY = Math.floor(py[i] / gridSize);
+                const gridZ = Math.floor(pz[i] / gridSize);
+                const key = `${gridX},${gridY},${gridZ}`;
+                
+                if (!spatialGrid.has(key)) {
+                    spatialGrid.set(key, []);
+                }
+                spatialGrid.get(key)!.push(i);
+            }
+            
+            console.log(`Created spatial grid with ${spatialGrid.size} cells`);
+            
+            // Pre-calculate neighbor counts for all splats
+            const neighborCounts = new Array(numSplats).fill(0);
+            const radiusSquared = searchRadius * searchRadius;
+            
+            // Process in batches to avoid blocking the UI
+            const batchSize = Math.min(1000, Math.ceil(numSplats / 100)); // Adaptive batch size
+            let processed = 0;
+            
+            const processBatch = () => {
+                const endIdx = Math.min(processed + batchSize, numSplats);
+                
+                for (let i = processed; i < endIdx; i++) {
+                    const currentX = px[i];
+                    const currentY = py[i];
+                    const currentZ = pz[i];
+                    
+                    // Get grid coordinates for current splat
+                    const gridX = Math.floor(currentX / gridSize);
+                    const gridY = Math.floor(currentY / gridSize);
+                    const gridZ = Math.floor(currentZ / gridSize);
+                    
+                    // Check neighboring grid cells (3x3x3 = 27 cells max)
+                    for (let dx = -1; dx <= 1; dx++) {
+                        for (let dy = -1; dy <= 1; dy++) {
+                            for (let dz = -1; dz <= 1; dz++) {
+                                const key = `${gridX + dx},${gridY + dy},${gridZ + dz}`;
+                                const cellSplats = spatialGrid.get(key);
+                                
+                                if (cellSplats) {
+                                    for (const j of cellSplats) {
+                                        if (i === j) continue; // Skip self
+                                        
+                                        const dx = currentX - px[j];
+                                        const dy = currentY - py[j];
+                                        const dz = currentZ - pz[j];
+                                        const distanceSquared = dx * dx + dy * dy + dz * dz;
+                                        
+                                        if (distanceSquared <= radiusSquared) {
+                                            neighborCounts[i]++;
+                                            // Early exit optimization
+                                            if (neighborCounts[i] >= minNeighbors) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    // Break out of nested loops if we have enough neighbors
+                                    if (neighborCounts[i] >= minNeighbors) break;
+                                }
+                            }
+                            if (neighborCounts[i] >= minNeighbors) break;
+                        }
+                        if (neighborCounts[i] >= minNeighbors) break;
+                    }
+                }
+                
+                processed = endIdx;
+                
+                if (processed < numSplats) {
+                    // Continue processing in next frame
+                    console.log(`Processed ${processed}/${numSplats} splats (${Math.round(processed/numSplats*100)}%)`);
+                    setTimeout(processBatch, 0);
+                } else {
+                    // Finished processing, now apply the filter
+                    console.log('Finished neighbor counting, applying filter...');
+                    
+                    const filter = (i: number) => {
+                        return neighborCounts[i] < minNeighbors;
+                    };
+                    
+                    // Use the same selection operation as other tools
+                    events.fire('edit.add', new SelectOp(splat, 'add', filter));
+                    
+                    // Delete all selected splats (only after all splats are processed)
+                    if (splats.indexOf(splatElem) === splats.length - 1) {
+                        selectedSplats().forEach((splat) => {
+                            editHistory.add(new DeleteSelectionOp(splat));
+                        });
+                        console.log('Density filter completed');
+                    }
+                }
+            };
+            
+            // Start processing
+            processBatch();
+        });
     });
     
     

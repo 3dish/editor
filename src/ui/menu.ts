@@ -117,6 +117,57 @@ class Menu extends Container {
             events.invoke('doc.new');
         });
 
+        //! Size Filter button  8888
+        const sizeFilterLabel = new Label({
+            text: 'Size Filter',
+            class: 'menu-option'
+        });
+        sizeFilterLabel.dom.classList.add('menu-option-persistent'); // added for persistent button
+        sizeFilterLabel.on('click', () => {
+            // Prompt user for method
+            const method = prompt('Choose size calculation method:\n1. volume (default)\n2. maxDimension\n3. averageDimension\n\nEnter method:', 'volume');
+            if (method !== null && ['volume', 'maxDimension', 'averageDimension'].includes(method)) {
+                // Prompt user for size threshold
+                const thresholdPrompt = method === 'volume' 
+                    ? 'Enter volume threshold (splats bigger will be deleted):'
+                    : `Enter ${method} threshold (splats bigger will be deleted):`;
+                const defaultValue = method === 'volume' ? '0.01' : '0.1';
+                
+                const threshold = prompt(thresholdPrompt, defaultValue);
+                if (threshold !== null && !isNaN(parseFloat(threshold))) {
+                    events.fire('splats.deleteBiggerThan', parseFloat(threshold), method);
+                }
+            } else if (method !== null) {
+                // Default to volume if invalid method
+                const threshold = prompt('Invalid method. Using volume. Enter volume threshold:', '0.01');
+                if (threshold !== null && !isNaN(parseFloat(threshold))) {
+                    events.fire('splats.deleteBiggerThan', parseFloat(threshold), 'volume');
+                }
+            }
+        });
+
+        //! Density Filter button  8888
+        const densityFilterLabel = new Label({
+            text: 'Density Filter',
+            class: 'menu-option'
+        });
+        densityFilterLabel.dom.classList.add('menu-option-persistent'); // added for persistent button
+        densityFilterLabel.on('click', () => {
+            // Prompt user for minimum neighbors
+            const minNeighbors = prompt('Enter minimum number of neighbors required:\n(Splats with fewer neighbors will be deleted)', '5');
+            if (minNeighbors !== null && !isNaN(parseInt(minNeighbors)) && parseInt(minNeighbors) >= 0) {
+                // Prompt user for search radius
+                const searchRadius = prompt('Enter search radius for neighbor detection:\n(Distance to look for neighbors)', '0.1');
+                if (searchRadius !== null && !isNaN(parseFloat(searchRadius)) && parseFloat(searchRadius) > 0) {
+                    events.fire('splats.deleteLowDensity', parseInt(minNeighbors), parseFloat(searchRadius));
+                } else {
+                    alert('Invalid search radius. Please enter a positive number.');
+                }
+            } else {
+                alert('Invalid minimum neighbors. Please enter a non-negative integer.');
+            }
+        });
+
 
 
         const toggleCollapsed = () => {
@@ -149,6 +200,8 @@ class Menu extends Container {
         buttonsContainer.append(quickImageRender);
         buttonsContainer.append(highResImageRender);
         buttonsContainer.append(resetWorkspaceLabel);
+        buttonsContainer.append(sizeFilterLabel);
+        buttonsContainer.append(densityFilterLabel);
         buttonsContainer.append(collapse);
         buttonsContainer.append(arrow);
 
