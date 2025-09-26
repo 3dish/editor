@@ -156,6 +156,16 @@ class Menu extends Container {
             events.fire('pivot.center');
         });
 
+        //! Add Black Plane to Selected Splat button  8888
+        const addBlackPlaneLabel = new Label({
+            text: 'Add Black Plane',
+            class: 'menu-option'
+        });
+        addBlackPlaneLabel.dom.classList.add('menu-option-persistent'); // added for persistent button
+        addBlackPlaneLabel.on('click', () => {
+            events.fire('create.blackPlane');
+        });
+
 
 
         const toggleCollapsed = () => {
@@ -190,6 +200,7 @@ class Menu extends Container {
         buttonsContainer.append(resetWorkspaceLabel);
         buttonsContainer.append(sizeFilterLabel);
         buttonsContainer.append(centerPivotLabel);
+        buttonsContainer.append(addBlackPlaneLabel);
         buttonsContainer.append(collapse);
         buttonsContainer.append(arrow);
 

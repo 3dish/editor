@@ -1,7 +1,7 @@
 import { Color, Mat4, Texture, Vec3, Vec4 } from 'playcanvas';
 
 import { EditHistory } from './edit-history';
-import { SelectAllOp, SelectNoneOp, SelectInvertOp, SelectOp, HideSelectionOp, UnhideAllOp, DeleteSelectionOp, ResetOp, MultiOp, AddSplatOp, AddBlackPlaneOp } from './edit-ops';
+import { SelectAllOp, SelectNoneOp, SelectInvertOp, SelectOp, HideSelectionOp, UnhideAllOp, DeleteSelectionOp, ResetOp, MultiOp, AddSplatOp } from './edit-ops';
 import { Events } from './events';
 import { Scene } from './scene';
 import { BufferWriter } from './serialize/writer';
@@ -795,26 +795,6 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         
         // Set pivot origin to boundCenter to use the geometric center of the splat
         events.fire('pivot.setOrigin', 'boundCenter');
-    });
-
-    //! Add Black Plane to Selected Splat: Adds black plane splats to the currently selected splat   8888
-    events.on('add.blackPlaneToSelected', (options: {
-        width?: number;
-        height?: number;
-        resolution?: number;
-        y?: number;
-    } = {}) => {
-        const selectedSplat = events.invoke('selection') as Splat;
-        if (!selectedSplat) {
-            console.warn('No splat selected. Please select a splat first.');
-            return;
-        }
-
-        try {
-            editHistory.add(new AddBlackPlaneOp(selectedSplat, options));
-        } catch (error) {
-            console.error('Failed to add black plane to selected splat:', error);
-        }
     });
 
     //! Create Black Plane: Creates a black plane made of individual splats (standalone)   8888

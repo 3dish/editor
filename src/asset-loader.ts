@@ -216,126 +216,6 @@ class AssetLoader {
         }
     }
 
-    // Add black plane splats to an existing splat
-    addBlackPlaneToSplat(splat: Splat, options: {
-        width?: number;
-        height?: number;
-        resolution?: number;
-        y?: number;
-    } = {}) {
-        const {
-            width = 2.0,
-            height = 2.0,
-            resolution = 20,
-            y = 0
-        } = options;
-
-        // Calculate number of new splats needed
-        const splatsPerRow = resolution;
-        const splatsPerCol = resolution;
-        const newSplatsCount = splatsPerRow * splatsPerCol;
-
-        const splatData = splat.splatData;
-        const currentSplatsCount = splatData.numSplats;
-        const totalSplatsCount = currentSplatsCount + newSplatsCount;
-
-        // Get existing property arrays
-        const existingProps = splatData.getElement('vertex').properties;
-        const requiredProps = ['x', 'y', 'z', 'opacity', 'rot_0', 'rot_1', 'rot_2', 'rot_3', 
-                              'f_dc_0', 'f_dc_1', 'f_dc_2', 'scale_0', 'scale_1', 'scale_2', 'state'];
-
-        // Create new larger arrays and copy existing data
-        const newStorageArrays: { [key: string]: Float32Array | Uint8Array } = {};
-
-        requiredProps.forEach(propName => {
-            const existingProp = existingProps.find((p: any) => p.name === propName);
-            if (existingProp) {
-                // Create new larger array
-                const ArrayType = existingProp.storage.constructor as any;
-                const newArray = new ArrayType(totalSplatsCount);
-                
-                // Copy existing data
-                newArray.set(existingProp.storage);
-                
-                newStorageArrays[propName] = newArray;
-            }
-        });
-
-        // Calculate step sizes for black plane
-        const stepX = width / (splatsPerRow - 1);
-        const stepZ = height / (splatsPerCol - 1);
-        const startX = -width / 2;
-        const startZ = -height / 2;
-
-        // Spherical harmonics coefficient for black color
-        const SH_C0 = 0.28209479177387814;
-        const blackSH = -0.5 / SH_C0; // This will result in black color
-
-        // Fill new arrays with black plane data
-        let newIdx = currentSplatsCount;
-        for (let row = 0; row < splatsPerCol; row++) {
-            for (let col = 0; col < splatsPerRow; col++) {
-                // Position
-                (newStorageArrays['x'] as Float32Array)[newIdx] = startX + col * stepX;
-                (newStorageArrays['y'] as Float32Array)[newIdx] = y;
-                (newStorageArrays['z'] as Float32Array)[newIdx] = startZ + row * stepZ;
-
-                // Rotation (identity quaternion)
-                (newStorageArrays['rot_0'] as Float32Array)[newIdx] = 0; // x
-                (newStorageArrays['rot_1'] as Float32Array)[newIdx] = 0; // y
-                (newStorageArrays['rot_2'] as Float32Array)[newIdx] = 0; // z
-                (newStorageArrays['rot_3'] as Float32Array)[newIdx] = 1; // w
-
-                // Black color (spherical harmonics coefficients)
-                (newStorageArrays['f_dc_0'] as Float32Array)[newIdx] = blackSH; // R
-                (newStorageArrays['f_dc_1'] as Float32Array)[newIdx] = blackSH; // G
-                (newStorageArrays['f_dc_2'] as Float32Array)[newIdx] = blackSH; // B
-
-                // Scale (log scale, small flat splats)
-                const splatSize = Math.min(stepX, stepZ) * 0.8; // Slightly smaller than grid spacing
-                (newStorageArrays['scale_0'] as Float32Array)[newIdx] = Math.log(splatSize); // X scale
-                (newStorageArrays['scale_1'] as Float32Array)[newIdx] = Math.log(1e-6);      // Y scale (very thin)
-                (newStorageArrays['scale_2'] as Float32Array)[newIdx] = Math.log(splatSize); // Z scale
-
-                // Opacity (fully opaque)
-                (newStorageArrays['opacity'] as Float32Array)[newIdx] = 5.0; // High positive value for full opacity
-
-                // State (unselected, visible)
-                (newStorageArrays['state'] as Uint8Array)[newIdx] = 0;
-
-                newIdx++;
-            }
-        }
-
-        // Update the splat data properties with new arrays
-        existingProps.forEach((prop: any) => {
-            if (newStorageArrays[prop.name]) {
-                prop.storage = newStorageArrays[prop.name];
-            }
-        });
-
-        // Update the splat data count
-        splatData.getElement('vertex').count = totalSplatsCount;
-        (splatData as any)._numSplats = totalSplatsCount;
-        splat.numSplats = totalSplatsCount;
-
-        // Update transform arrays (they need to be resized too)
-        const transformProp = existingProps.find((p: any) => p.name === 'transform');
-        if (transformProp) {
-            const newTransformArray = new Uint16Array(totalSplatsCount);
-            newTransformArray.set(transformProp.storage);
-            transformProp.storage = newTransformArray;
-        }
-
-        // Recreate textures with new size
-        this.updateSplatTextures(splat);
-
-        // Update sorting and bounds
-        splat.updateSorting();
-        splat.makeLocalBoundDirty();
-
-        return newSplatsCount;
-    }
 
     // Helper function to update splat textures after data changes
     updateSplatTextures(splat: Splat) {
@@ -391,11 +271,11 @@ class AssetLoader {
         filename?: string;
     } = {}) {
         const {
-            width = 2.0,
-            height = 2.0,
-            resolution = 20,
+            width = 0.3,
+            height = 0.3,
+            resolution = 60,
             y = 0,
-            filename = 'black_plane.ply'
+            filename = 'grey_shadow.ply'
         } = options;
 
         // Calculate number of splats needed
@@ -425,47 +305,112 @@ class AssetLoader {
         const startX = -width / 2;
         const startZ = -height / 2;
 
-        // Spherical harmonics coefficient for black color
+        // Spherical harmonics coefficient for grey shadow color
         const SH_C0 = 0.28209479177387814;
-        const blackSH = -0.5 / SH_C0; // This will result in black color
+        const greySH = -0.2 / SH_C0; // This will result in grey shadow color (lighter than black)
 
-        // Fill arrays with splat data
+        // Fill arrays with splat data - arrange in proper circular pattern
         let idx = 0;
-        for (let row = 0; row < splatsPerCol; row++) {
-            for (let col = 0; col < splatsPerRow; col++) {
-                // Position
-                storage_x[idx] = startX + col * stepX;
+        const centerX = 0;
+        const centerZ = 0;
+        const maxRadius = Math.min(width, height) / 2; // Use the smaller dimension as radius
+        
+        // Create circular arrangement using polar coordinates
+        const splatSpacing = Math.min(stepX, stepZ); // Use smaller spacing for denser packing
+        const radialSteps = Math.floor(maxRadius / splatSpacing);
+        
+        for (let r = 0; r <= radialSteps; r++) {
+            const radius = (r / radialSteps) * maxRadius;
+            
+            if (radius === 0) {
+                // Center point
+                storage_x[idx] = centerX;
                 storage_y[idx] = y;
-                storage_z[idx] = startZ + row * stepZ;
-
+                storage_z[idx] = centerZ;
+                
+                // Calculate shadow intensity (center = darkest)
+                const shadowIntensity = 1.0; // Full intensity at center
+                
+                // Dark shadow color
+                const darkShadowSH = -0.5 / SH_C0; // Dark shadow color
+                const whiteSH = 0.5 / SH_C0; // White color
+                const gradientGreySH = darkShadowSH * shadowIntensity + whiteSH * (1 - shadowIntensity);
+                
+                storage_f_dc_0[idx] = gradientGreySH; // R
+                storage_f_dc_1[idx] = gradientGreySH; // G
+                storage_f_dc_2[idx] = gradientGreySH; // B
+                
                 // Rotation (identity quaternion)
                 storage_rot_0[idx] = 0; // x
                 storage_rot_1[idx] = 0; // y
                 storage_rot_2[idx] = 0; // z
                 storage_rot_3[idx] = 1; // w
-
-                // Black color (spherical harmonics coefficients)
-                storage_f_dc_0[idx] = blackSH; // R
-                storage_f_dc_1[idx] = blackSH; // G
-                storage_f_dc_2[idx] = blackSH; // B
-
+                
                 // Scale (log scale, small flat splats)
-                const splatSize = Math.min(stepX, stepZ) * 0.8; // Slightly smaller than grid spacing
-                storage_scale_0[idx] = Math.log(splatSize); // X scale
+                storage_scale_0[idx] = Math.log(splatSpacing * 0.8); // X scale
                 storage_scale_1[idx] = Math.log(1e-6);      // Y scale (very thin)
-                storage_scale_2[idx] = Math.log(splatSize); // Z scale
-
+                storage_scale_2[idx] = Math.log(splatSpacing * 0.8); // Z scale
+                
                 // Opacity (fully opaque)
                 storage_opacity[idx] = 5.0; // High positive value for full opacity
-
+                
                 idx++;
+            } else {
+                // Calculate number of splats for this radius (circumference)
+                const circumference = 2 * Math.PI * radius;
+                const splatsAtRadius = Math.max(1, Math.floor(circumference / splatSpacing));
+                
+                for (let i = 0; i < splatsAtRadius; i++) {
+                    const angle = (i / splatsAtRadius) * 2 * Math.PI;
+                    const x = centerX + radius * Math.cos(angle);
+                    const z = centerZ + radius * Math.sin(angle);
+                
+                    storage_x[idx] = x;
+                    storage_y[idx] = y;
+                    storage_z[idx] = z;
+
+                    // Rotation (identity quaternion)
+                    storage_rot_0[idx] = 0; // x
+                    storage_rot_1[idx] = 0; // y
+                    storage_rot_2[idx] = 0; // z
+                    storage_rot_3[idx] = 1; // w
+
+                    // Calculate shadow intensity based on distance from center
+                    const normalizedDistance = radius / maxRadius; // 0 to 1
+                    
+                    // Create smoother, lighter transition to white at edges
+                    // Use a much gentler curve for smoother fade
+                    const shadowIntensity = Math.pow(1 - normalizedDistance, 0.2); // Very gentle curve for smooth transition
+                    
+                    // Interpolate between dark shadow (center) and white (edges)
+                    const darkShadowSH = -0.3 / SH_C0; // Dark shadow color
+                    const whiteSH = 0.5 / SH_C0; // White color
+                    const gradientGreySH = darkShadowSH * shadowIntensity + whiteSH * (1 - shadowIntensity);
+
+                    storage_f_dc_0[idx] = gradientGreySH; // R
+                    storage_f_dc_1[idx] = gradientGreySH; // G
+                    storage_f_dc_2[idx] = gradientGreySH; // B
+
+                    // Scale (log scale, small flat splats)
+                    storage_scale_0[idx] = Math.log(splatSpacing * 0.8); // X scale
+                    storage_scale_1[idx] = Math.log(1e-6);      // Y scale (very thin)
+                    storage_scale_2[idx] = Math.log(splatSpacing * 0.8); // Z scale
+
+                    // Opacity (fully opaque)
+                    storage_opacity[idx] = 5.0; // High positive value for full opacity
+
+                    idx++;
+                }
             }
         }
+        
+        // Update total splats count to actual number created (circular area)
+        const actualSplatsCount = idx;
 
         // Create GSplatData
         const gsplatData = new GSplatData([{
             name: 'vertex',
-            count: totalSplats,
+            count: actualSplatsCount,
             properties: [
                 { type: 'float', name: 'x', storage: storage_x, byteSize: 4 },
                 { type: 'float', name: 'y', storage: storage_y, byteSize: 4 },

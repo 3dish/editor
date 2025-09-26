@@ -413,53 +413,6 @@ class AddSplatOp {
     }
 }
 
-class AddBlackPlaneOp {
-    name = 'addBlackPlane';
-    splat: Splat;
-    options: any;
-    originalNumSplats: number;
-    addedSplatsCount: number;
-
-    constructor(splat: Splat, options: any) {
-        this.splat = splat;
-        this.options = options;
-        this.originalNumSplats = splat.numSplats;
-        this.addedSplatsCount = 0;
-    }
-
-    do() {
-        this.addedSplatsCount = this.splat.scene.assetLoader.addBlackPlaneToSplat(this.splat, this.options);
-        this.splat.scene.events.fire('splat.dataChanged', this.splat);
-    }
-
-    undo() {
-        // To undo, we need to restore the original arrays
-        const splatData = this.splat.splatData;
-        const existingProps = splatData.getElement('vertex').properties;
-        
-        // Resize all arrays back to original size
-        existingProps.forEach((prop: any) => {
-            if (prop.storage && prop.storage.length > this.originalNumSplats) {
-                const ArrayType = prop.storage.constructor as any;
-                const resizedArray = new ArrayType(this.originalNumSplats);
-                resizedArray.set(prop.storage.subarray(0, this.originalNumSplats));
-                prop.storage = resizedArray;
-            }
-        });
-
-        // Update counts
-        splatData.getElement('vertex').count = this.originalNumSplats;
-        (splatData as any)._numSplats = this.originalNumSplats;
-        this.splat.numSplats = this.originalNumSplats;
-
-        // Update textures and sorting
-        this.splat.scene.assetLoader.updateSplatTextures(this.splat);
-        this.splat.updateSorting();
-        this.splat.makeLocalBoundDirty();
-        
-        this.splat.scene.events.fire('splat.dataChanged', this.splat);
-    }
-}
 
 export {
     EditOp,
@@ -478,5 +431,4 @@ export {
     SetSplatColorAdjustmentOp,
     MultiOp,
     AddSplatOp,
-    AddBlackPlaneOp
 };
