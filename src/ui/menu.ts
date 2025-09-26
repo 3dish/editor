@@ -147,25 +147,13 @@ class Menu extends Container {
         });
 
         //! Density Filter button  8888
-        const densityFilterLabel = new Label({
-            text: 'Density Filter',
+        const centerPivotLabel = new Label({
+            text: 'Center Pivot',
             class: 'menu-option'
         });
-        densityFilterLabel.dom.classList.add('menu-option-persistent'); // added for persistent button
-        densityFilterLabel.on('click', () => {
-            // Prompt user for minimum neighbors
-            const minNeighbors = prompt('Enter minimum number of neighbors required:\n(Splats with fewer neighbors will be deleted)', '5');
-            if (minNeighbors !== null && !isNaN(parseInt(minNeighbors)) && parseInt(minNeighbors) >= 0) {
-                // Prompt user for search radius
-                const searchRadius = prompt('Enter search radius for neighbor detection:\n(Distance to look for neighbors)', '0.1');
-                if (searchRadius !== null && !isNaN(parseFloat(searchRadius)) && parseFloat(searchRadius) > 0) {
-                    events.fire('splats.deleteLowDensity', parseInt(minNeighbors), parseFloat(searchRadius));
-                } else {
-                    alert('Invalid search radius. Please enter a positive number.');
-                }
-            } else {
-                alert('Invalid minimum neighbors. Please enter a non-negative integer.');
-            }
+        centerPivotLabel.dom.classList.add('menu-option-persistent'); // added for persistent button
+        centerPivotLabel.on('click', () => {
+            events.fire('pivot.center');
         });
 
 
@@ -201,7 +189,7 @@ class Menu extends Container {
         buttonsContainer.append(highResImageRender);
         buttonsContainer.append(resetWorkspaceLabel);
         buttonsContainer.append(sizeFilterLabel);
-        buttonsContainer.append(densityFilterLabel);
+        buttonsContainer.append(centerPivotLabel);
         buttonsContainer.append(collapse);
         buttonsContainer.append(arrow);
 

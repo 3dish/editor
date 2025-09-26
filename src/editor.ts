@@ -1,7 +1,7 @@
 import { Color, Mat4, Texture, Vec3, Vec4 } from 'playcanvas';
 
 import { EditHistory } from './edit-history';
-import { SelectAllOp, SelectNoneOp, SelectInvertOp, SelectOp, HideSelectionOp, UnhideAllOp, DeleteSelectionOp, ResetOp, MultiOp, AddSplatOp } from './edit-ops';
+import { SelectAllOp, SelectNoneOp, SelectInvertOp, SelectOp, HideSelectionOp, UnhideAllOp, DeleteSelectionOp, ResetOp, MultiOp, AddSplatOp, AddBlackPlaneOp } from './edit-ops';
 import { Events } from './events';
 import { Scene } from './scene';
 import { BufferWriter } from './serialize/writer';
@@ -788,127 +788,60 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         });
     });
 
-    //! Density Filter: Removes splats in low density areas (Optimized)   8888
-    events.on('splats.deleteLowDensity', (minNeighbors: number, searchRadius: number = 0.1) => {
-        const splats = scene.getElementsByType(ElementType.splat);
+    //! Center Pivot: Centers the pivot at the center of the splat's bounding box   8888
+    events.on('pivot.center', () => {
+        const splat = events.invoke('selection');
+        if (!splat) return;
         
-        splats.forEach((splatElem) => {
-            const splat = splatElem as Splat;
-            
-            // Get position data arrays
-            const px = splat.splatData.getProp('x');
-            const py = splat.splatData.getProp('y');
-            const pz = splat.splatData.getProp('z');
-            
-            const numSplats = splat.splatData.numSplats;
-            console.log(`Processing ${numSplats} splats for density filter...`);
-            
-            // Create a spatial grid for faster neighbor lookup
-            const gridSize = searchRadius * 2; // Each grid cell is 2x the search radius
-            const spatialGrid = new Map<string, number[]>();
-            
-            // Populate spatial grid
-            for (let i = 0; i < numSplats; i++) {
-                const gridX = Math.floor(px[i] / gridSize);
-                const gridY = Math.floor(py[i] / gridSize);
-                const gridZ = Math.floor(pz[i] / gridSize);
-                const key = `${gridX},${gridY},${gridZ}`;
-                
-                if (!spatialGrid.has(key)) {
-                    spatialGrid.set(key, []);
-                }
-                spatialGrid.get(key)!.push(i);
-            }
-            
-            console.log(`Created spatial grid with ${spatialGrid.size} cells`);
-            
-            // Pre-calculate neighbor counts for all splats
-            const neighborCounts = new Array(numSplats).fill(0);
-            const radiusSquared = searchRadius * searchRadius;
-            
-            // Process in batches to avoid blocking the UI
-            const batchSize = Math.min(1000, Math.ceil(numSplats / 100)); // Adaptive batch size
-            let processed = 0;
-            
-            const processBatch = () => {
-                const endIdx = Math.min(processed + batchSize, numSplats);
-                
-                for (let i = processed; i < endIdx; i++) {
-                    const currentX = px[i];
-                    const currentY = py[i];
-                    const currentZ = pz[i];
-                    
-                    // Get grid coordinates for current splat
-                    const gridX = Math.floor(currentX / gridSize);
-                    const gridY = Math.floor(currentY / gridSize);
-                    const gridZ = Math.floor(currentZ / gridSize);
-                    
-                    // Check neighboring grid cells (3x3x3 = 27 cells max)
-                    for (let dx = -1; dx <= 1; dx++) {
-                        for (let dy = -1; dy <= 1; dy++) {
-                            for (let dz = -1; dz <= 1; dz++) {
-                                const key = `${gridX + dx},${gridY + dy},${gridZ + dz}`;
-                                const cellSplats = spatialGrid.get(key);
-                                
-                                if (cellSplats) {
-                                    for (const j of cellSplats) {
-                                        if (i === j) continue; // Skip self
-                                        
-                                        const dx = currentX - px[j];
-                                        const dy = currentY - py[j];
-                                        const dz = currentZ - pz[j];
-                                        const distanceSquared = dx * dx + dy * dy + dz * dz;
-                                        
-                                        if (distanceSquared <= radiusSquared) {
-                                            neighborCounts[i]++;
-                                            // Early exit optimization
-                                            if (neighborCounts[i] >= minNeighbors) {
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    // Break out of nested loops if we have enough neighbors
-                                    if (neighborCounts[i] >= minNeighbors) break;
-                                }
-                            }
-                            if (neighborCounts[i] >= minNeighbors) break;
-                        }
-                        if (neighborCounts[i] >= minNeighbors) break;
-                    }
-                }
-                
-                processed = endIdx;
-                
-                if (processed < numSplats) {
-                    // Continue processing in next frame
-                    console.log(`Processed ${processed}/${numSplats} splats (${Math.round(processed/numSplats*100)}%)`);
-                    setTimeout(processBatch, 0);
-                } else {
-                    // Finished processing, now apply the filter
-                    console.log('Finished neighbor counting, applying filter...');
-                    
-                    const filter = (i: number) => {
-                        return neighborCounts[i] < minNeighbors;
-                    };
-                    
-                    // Use the same selection operation as other tools
-                    events.fire('edit.add', new SelectOp(splat, 'add', filter));
-                    
-                    // Delete all selected splats (only after all splats are processed)
-                    if (splats.indexOf(splatElem) === splats.length - 1) {
-                        selectedSplats().forEach((splat) => {
-                            editHistory.add(new DeleteSelectionOp(splat));
-                        });
-                        console.log('Density filter completed');
-                    }
-                }
-            };
-            
-            // Start processing
-            processBatch();
-        });
+        // Set pivot origin to boundCenter to use the geometric center of the splat
+        events.fire('pivot.setOrigin', 'boundCenter');
     });
-    
+
+    //! Add Black Plane to Selected Splat: Adds black plane splats to the currently selected splat   8888
+    events.on('add.blackPlaneToSelected', (options: {
+        width?: number;
+        height?: number;
+        resolution?: number;
+        y?: number;
+    } = {}) => {
+        const selectedSplat = events.invoke('selection') as Splat;
+        if (!selectedSplat) {
+            console.warn('No splat selected. Please select a splat first.');
+            return;
+        }
+
+        try {
+            editHistory.add(new AddBlackPlaneOp(selectedSplat, options));
+        } catch (error) {
+            console.error('Failed to add black plane to selected splat:', error);
+        }
+    });
+
+    //! Create Black Plane: Creates a black plane made of individual splats (standalone)   8888
+    events.on('create.blackPlane', async (options: {
+        width?: number;
+        height?: number;
+        resolution?: number;
+        y?: number;
+    } = {}) => {
+        try {
+            const blackPlane = await scene.assetLoader.createBlackPlane(options);
+            editHistory.add(new AddSplatOp(scene, blackPlane));
+            events.fire('selection.set', blackPlane);
+        } catch (error) {
+            console.error('Failed to create black plane:', error);
+        }
+    });
+
+    // Expose black plane functions to global scope for testing
+    if (typeof window !== 'undefined') {
+        (window as any).addBlackPlaneToSelected = (options = {}) => {
+            events.fire('add.blackPlaneToSelected', options);
+        };
+        (window as any).createBlackPlane = (options = {}) => {
+            events.fire('create.blackPlane', options);
+        };
+    }
     
 };
 

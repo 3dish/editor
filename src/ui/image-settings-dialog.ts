@@ -66,7 +66,7 @@ class ImageSettingsDialog extends Container {
         const resolutionValue = new VectorInput({
             class: 'vector-input',
             dimensions: 2,
-            min: 320,
+            min: 300,
             max: 16000,
             precision: 0,
             value: [1024, 768]
