@@ -332,7 +332,7 @@ class AssetLoader {
                 const shadowIntensity = 1.0; // Full intensity at center
                 
                 // Dark shadow color
-                const darkShadowSH = -0.5 / SH_C0; // Dark shadow color
+                const darkShadowSH = 0.5 / SH_C0; // Dark shadow color
                 const whiteSH = 0.5 / SH_C0; // White color
                 const gradientGreySH = darkShadowSH * shadowIntensity + whiteSH * (1 - shadowIntensity);
                 
@@ -383,7 +383,7 @@ class AssetLoader {
                     const shadowIntensity = Math.pow(1 - normalizedDistance, 0.2); // Very gentle curve for smooth transition
                     
                     // Interpolate between dark shadow (center) and white (edges)
-                    const darkShadowSH = -0.3 / SH_C0; // Dark shadow color
+                    const darkShadowSH = 0.5 / SH_C0; // Dark shadow color
                     const whiteSH = 0.5 / SH_C0; // White color
                     const gradientGreySH = darkShadowSH * shadowIntensity + whiteSH * (1 - shadowIntensity);
 

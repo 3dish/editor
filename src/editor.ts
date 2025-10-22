@@ -1,4 +1,4 @@
-import { Color, Mat4, Texture, Vec3, Vec4 } from 'playcanvas';
+import { Color, Mat4, Texture, Vec3, Vec4, Asset } from 'playcanvas';
 
 import { EditHistory } from './edit-history';
 import { SelectAllOp, SelectNoneOp, SelectInvertOp, SelectOp, HideSelectionOp, UnhideAllOp, DeleteSelectionOp, ResetOp, MultiOp, AddSplatOp } from './edit-ops';
@@ -433,7 +433,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
             const splat = splats[0];
 
             // wrap PLY in a blob and load it
-            const blob = new Blob([buffer], { type: 'octet/stream' });
+            const blob = new Blob([buffer as unknown as BlobPart], { type: 'octet/stream' });
             const url = URL.createObjectURL(blob);
             const { filename } = splat;
             const copy = await scene.assetLoader.loadPly({ url, filename });
@@ -736,6 +736,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         });
         
     });
+
 
     //! Size Filter: Removes all splats bigger than specified threshold   8888
     events.on('splats.deleteBiggerThan', (sizeThreshold: number, method: string = 'volume') => {
