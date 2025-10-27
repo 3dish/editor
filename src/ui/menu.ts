@@ -93,8 +93,15 @@ class Menu extends Container {
             class: 'menu-option'
         });
         quickImageRender.dom.classList.add('menu-option-persistent'); //added for persistent button
-        quickImageRender.on('click', () => {
-            events.invoke('show.imageSettingsDialog', { preset: 'custom', width: 320, height: 320, transparentBg: true });
+        quickImageRender.on('click', async () => {
+            // First render - normal resolution
+            await events.invoke('show.renderHDandNormal', { preset: 'custom', width: 320, height: 320, transparentBg: true });
+            
+            // Wait for render to complete, then do second render
+            setTimeout(() => {
+                // Second render - high resolution
+                events.invoke('show.renderHDandNormal', { preset: 'custom', width: 1200, height: 1200, transparentBg: true });
+            }, 500);
         });
 
         //! High Res Image Export button (1200x1200px)  8888

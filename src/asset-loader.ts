@@ -271,10 +271,10 @@ class AssetLoader {
         filename?: string;
     } = {}) {
         const {
-            width = 0.3,
-            height = 0.3,
+            width = 1,
+            height = 1,
             resolution = 60,
-            y = 0,
+            y = 0.01,
             filename = 'grey_shadow.ply'
         } = options;
 
@@ -307,7 +307,6 @@ class AssetLoader {
 
         // Spherical harmonics coefficient for grey shadow color
         const SH_C0 = 0.28209479177387814;
-        const greySH = -0.2 / SH_C0; // This will result in grey shadow color (lighter than black)
 
         // Fill arrays with splat data - arrange in proper circular pattern
         let idx = 0;
@@ -331,14 +330,16 @@ class AssetLoader {
                 // Calculate shadow intensity (center = darkest)
                 const shadowIntensity = 1.0; // Full intensity at center
                 
-                // Dark shadow color
-                const darkShadowSH = -0.5 / SH_C0; // Dark shadow color
+                // Brown to white gradient
+                const brownSH_R = -0.2 / SH_C0; // Brown red component
+                const brownSH_G = -0.4 / SH_C0; // Brown green component  
+                const brownSH_B = -0.6 / SH_C0; // Brown blue component
                 const whiteSH = 0.5 / SH_C0; // White color
-                const gradientGreySH = darkShadowSH * shadowIntensity + whiteSH * (1 - shadowIntensity);
                 
-                storage_f_dc_0[idx] = gradientGreySH; // R
-                storage_f_dc_1[idx] = gradientGreySH; // G
-                storage_f_dc_2[idx] = gradientGreySH; // B
+                // Interpolate from brown (center) to white (edges)
+                storage_f_dc_0[idx] = brownSH_R * shadowIntensity + whiteSH * (1 - shadowIntensity); // R
+                storage_f_dc_1[idx] = brownSH_G * shadowIntensity + whiteSH * (1 - shadowIntensity); // G
+                storage_f_dc_2[idx] = brownSH_B * shadowIntensity + whiteSH * (1 - shadowIntensity); // B
                 
                 // Rotation (identity quaternion)
                 storage_rot_0[idx] = 0; // x
@@ -382,14 +383,16 @@ class AssetLoader {
                     // Use a much gentler curve for smoother fade
                     const shadowIntensity = Math.pow(1 - normalizedDistance, 0.2); // Very gentle curve for smooth transition
                     
-                    // Interpolate between dark shadow (center) and white (edges)
-                    const darkShadowSH = -0.3 / SH_C0; // Dark shadow color
+                    // Brown to white gradient
+                    const brownSH_R = -0.2 / SH_C0; // Brown red component
+                    const brownSH_G = -0.4 / SH_C0; // Brown green component  
+                    const brownSH_B = -0.6 / SH_C0; // Brown blue component
                     const whiteSH = 0.5 / SH_C0; // White color
-                    const gradientGreySH = darkShadowSH * shadowIntensity + whiteSH * (1 - shadowIntensity);
 
-                    storage_f_dc_0[idx] = gradientGreySH; // R
-                    storage_f_dc_1[idx] = gradientGreySH; // G
-                    storage_f_dc_2[idx] = gradientGreySH; // B
+                    // Interpolate from brown (center) to white (edges)
+                    storage_f_dc_0[idx] = brownSH_R * shadowIntensity + whiteSH * (1 - shadowIntensity); // R
+                    storage_f_dc_1[idx] = brownSH_G * shadowIntensity + whiteSH * (1 - shadowIntensity); // G
+                    storage_f_dc_2[idx] = brownSH_B * shadowIntensity + whiteSH * (1 - shadowIntensity); // B
 
                     // Scale (log scale, small flat splats)
                     storage_scale_0[idx] = Math.log(splatSpacing * 0.8); // X scale

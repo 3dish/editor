@@ -70,7 +70,7 @@ class Splat extends Element {
     _name = '';
     _tintClr = new Color(1, 1, 1);
     _temperature = 0;
-    _saturation = 1;
+    _saturation = 1.3;
     _brightness = 0.1;  //! changed from 0 to 0.1  8888
     _blackPoint = 0.1;  //! changed from 0 to 0.1  8888
     _whitePoint = 1;
@@ -192,8 +192,14 @@ class Splat extends Element {
     destroy() {
         super.destroy();
         this.entity.destroy();
-        this.asset.registry.remove(this.asset);
-        this.asset.unload();
+        if(this.asset){
+            // Only remove from registry if the asset was added to one
+            if(this.asset.registry) {
+                this.asset.registry.remove(this.asset);
+                this.asset.unload();
+            }
+            
+        }   
     }
 
     updateState(changedState = State.selected) {
@@ -608,7 +614,7 @@ class Splat extends Element {
         this.visible = visible;
         this.tintClr = new Color(tintClr[0], tintClr[1], tintClr[2], tintClr[3]);
         this.temperature = temperature ?? 0;
-        this.saturation = saturation ?? 1;
+        this.saturation = saturation ?? 1.3;
         this.brightness = brightness ?? 0.1;  //! changed from 0 to 0.1  8888
         this.blackPoint = blackPoint ?? 0.1;  //! changed from 0 to 0.1  8888
         this.whitePoint = whitePoint;

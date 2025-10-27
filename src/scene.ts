@@ -220,13 +220,16 @@ class Scene {
         // start the app
         this.app.start();
     }
-
+    //Custom scnece clear function 8888
     clear() {
         const splats = this.getElementsByType(ElementType.splat);
         splats.forEach((splat) => {
             this.remove(splat);
             try{
-                (splat as Splat).destroy();
+                console.log((splat as Splat).name);
+                if((splat as Splat).name !== 'grey_shadow.ply'){
+                    (splat as Splat).destroy();
+                }
             }catch{
                 console.log("Error deleting")
             }

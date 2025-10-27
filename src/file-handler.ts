@@ -181,7 +181,7 @@ const initFileHandler = (scene: Scene, events: Events, dropTarget: HTMLElement, 
                     model._brightness = stored?.brightness ?? 0.1;
                     model._blackPoint = stored?.blackPoint ?? 0.1; 
                     model._temperature = stored?.temperature ?? 0;
-                    model._saturation = stored?.saturation ?? 1;
+                    model._saturation = stored?.saturation ?? 1.3;
                     model._whitePoint = stored?.whitePoint ?? 1;
                     model._transparency = stored?.transparency ?? 1;
                     if (stored?.tintClr) {
@@ -192,8 +192,7 @@ const initFileHandler = (scene: Scene, events: Events, dropTarget: HTMLElement, 
 
                 //! Activate small sphere selection tool after file import (for drag & drop)
                 setTimeout(() => {
-                    events.fire('tool.smallSphereSelection');
-                    events.fire('tool.deactivate');
+                    events.fire('splats.deleteBiggerThan', 0.05, 'maxDimension');
                 }, 1300);
 
                 return model;

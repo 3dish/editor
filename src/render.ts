@@ -124,7 +124,7 @@ const registerRenderEvents = (scene: Scene, events: Events) => {
             const baseName = removeExtension(selected?.name ?? 'SuperSplat');
             // Add "_hd" suffix for high-resolution exports (1200x1200px)
             const suffix = (width === 1200 && height === 1200) ? '_hd' : '';
-            const filename = `${baseName}${suffix}.png`;
+            const filename = `${baseName}.png`;
 
             // download
             downloadFile(arrayBuffer, filename);
@@ -140,6 +140,11 @@ const registerRenderEvents = (scene: Scene, events: Events) => {
             scene.camera.endOffscreenMode();
             scene.camera.renderOverlays = true;
             scene.camera.entity.camera.clearColor.set(0, 0, 0, 0);
+            
+            // Force camera to rebuild render targets to ensure clean state
+            scene.camera.rebuildRenderTargets();
+            // Force a scene render to reset any cached state
+            scene.forceRender = true;
 
             events.fire('stopSpinner');
             //scene.camera.setDistance(distance);

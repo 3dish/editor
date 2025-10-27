@@ -245,7 +245,7 @@ class ColorPanel extends Container {
             isUpdatingFromSplat = true;
             tintPicker.value = splat ? [splat.tintClr.r, splat.tintClr.g, splat.tintClr.b] : [1, 1, 1];
             temperatureSlider.value = splat ? splat.temperature : 0;
-            saturationSlider.value = splat ? splat.saturation : 0;
+            saturationSlider.value = splat ? splat.saturation : 1.3;
             brightnessSlider.value = splat ? splat.brightness : 0.1;
             blackPointSlider.value = splat ? splat.blackPoint : 0.1;
             whitePointSlider.value = splat ? splat.whitePoint : 1;
@@ -459,7 +459,7 @@ class ColorPanel extends Container {
                     newState: {
                         tintClr: new Color(1, 1, 1),
                         temperature: 0,
-                        saturation: 1,
+                        saturation: 1.3,
                         brightness: 0.1,
                         blackPoint: 0.1,
                         whitePoint: 1,

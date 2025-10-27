@@ -250,8 +250,7 @@ class EditorUI {
                 loadCurrentFile().then(() => {
                     updateFileCounter();
                     setTimeout(() => {
-                        events.fire('tool.smallSphereSelection');
-                        events.fire('tool.deactivate');
+                        events.fire('splats.deleteBiggerThan', 0.0001);
                     }, 1300);
                 });
             } else {
@@ -329,8 +328,7 @@ class EditorUI {
                     nextButton.disabled = folderFiles.length <= 1;
                     updateFileCounter();
                     setTimeout(() => {
-                        events.fire('tool.smallSphereSelection');
-                        events.fire('tool.deactivate');
+                        events.fire('splats.deleteBiggerThan', 0.0001);
                     }, 1300);
                 });
                 //nextButton.disabled = folderFiles.length <= 1;
@@ -430,8 +428,7 @@ class EditorUI {
                 loadCurrentFile().then(() => {
                     updateFileCounter();
                     setTimeout(() => {
-                        events.fire('tool.smallSphereSelection');
-                        events.fire('tool.deactivate');
+                        events.fire('splats.deleteBiggerThan', 0.0001);
                     }, 1300);
                     nextButton.disabled = currentFileIndex >= folderFiles.length - 1;
                 });
@@ -555,6 +552,12 @@ class EditorUI {
                 events.fire('tool.deactivate');
                 await events.invoke('render.image', imageSettings);
             }
+        });
+        events.function('show.renderHDandNormal', async (initial) => {
+            const imageSettings = await imageSettingsDialog.show(initial);
+
+            events.fire('tool.deactivate');
+            await events.invoke('render.image', initial);
         });
 
         events.function('show.videoSettingsDialog', async () => {
