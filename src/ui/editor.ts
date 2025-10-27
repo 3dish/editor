@@ -357,24 +357,24 @@ class EditorUI {
             const url = URL.createObjectURL(file);
             await events.invoke('import', url, file.name);
             URL.revokeObjectURL(url);
-            // 1. Import Wood.splat first
-            const woodSplatPath = '/static/images/Wood.splat'; // Use the correct path!
+            // 1. Import WhitePlane.splat first
+            const woodSplatPath = '/static/images/WhitePlane.splat'; // Use the correct path!
             try {
                 const response = await fetch(woodSplatPath);
                 if (!response.ok) throw new Error('Default splat file not found');
                 const blob = await response.blob();
-                const woodFile = new File([blob], 'Wood.splat');
+                const woodFile = new File([blob], 'WhitePlane.splat');
                 const woodUrl = URL.createObjectURL(woodFile);
                 events.invoke('scene.clear');
                 // If events.invoke('import', ...) returns a promise, await it:
                 await events.invoke('import', woodUrl, woodFile.name);
                 URL.revokeObjectURL(woodUrl);
         
-                // Center after Wood.splat is loadeds
-                events.fire('centerFit.selectedSplat');
+                // Center after WhitePlane.splat is loadeds
+                //events.fire('centerFit.selectedSplat');
 
                 const splats = await events.invoke('scene.splats');
-                const woodSplat = splats.find(s => s.name === 'Wood.splat');
+                const woodSplat = splats.find(s => s.name === 'WhitePlane.splat');
                 if (woodSplat) {
                     woodSplat.visible = false;
                 }

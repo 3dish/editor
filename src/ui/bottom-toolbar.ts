@@ -280,13 +280,13 @@ class BottomToolbar extends Container {
         const removeBelowXZButton2 = new Button({
             id: 'bottom-toolbar-remove-below-xz-2',
             class: 'bottom-toolbar-button',
-            text: 'Step 1'
+            text: 'Better Bellow XZ'
         });
         removeBelowXZButton2.dom.classList.add('toolbar-step-btn');
         this.append(removeBelowXZButton2);
         tooltips.register(removeBelowXZButton2, 'Removes cloud and extra wood from bottom', 'top');
         removeBelowXZButton2.on('click', () => {
-            events.fire('splats.selectBelowXZ', true);
+            events.fire('splats.smoothBelowXZ');
         });
  
         //! FInal STep Button: Automates a sequence of operations  8888 
