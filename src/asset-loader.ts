@@ -10,7 +10,7 @@ import {
     PIXELFORMAT_R16U,
     GSplat
 } from 'playcanvas';
-import { Quat } from 'playcanvas';
+import { Quat, Vec3 } from 'playcanvas';
 
 import { Events } from './events';
 import { Splat } from './splat';
@@ -22,6 +22,33 @@ interface ModelLoadRequest {
     maxAnisotropy?: number;
     animationFrame?: boolean;       // animations disable morton re-ordering at load time for faster loading
 }
+
+const IMPORT_X_ROTATION_DEG = 270;
+
+const SKIP_IMPORT_ROTATION_NAMES = new Set([
+    'whiteplane.splat'
+]);
+
+const shouldApplyImportRotation = (filename?: string) => {
+    const name = (filename ?? '').toLowerCase().split(/[/\\]/).pop() ?? '';
+    return !SKIP_IMPORT_ROTATION_NAMES.has(name);
+};
+
+const applyImportRotation = (splat: Splat, source: string) => {
+    if (!shouldApplyImportRotation(splat.filename)) {
+        console.log('[import-rotation] skipped', { source, filename: splat.filename });
+        return;
+    }
+    splat.entity.setLocalRotation(new Quat().setFromEulerAngles(IMPORT_X_ROTATION_DEG, 0, 0));
+    const euler = new Vec3();
+    splat.entity.getLocalRotation().getEulerAngles(euler);
+    console.log('[import-rotation] applied', {
+        source,
+        filename: splat.filename,
+        xRotationDeg: IMPORT_X_ROTATION_DEG,
+        eulerDegrees: { x: euler.x, y: euler.y, z: euler.z }
+    });
+};
 
 // ideally this function would stream data directly into GSplatData buffers.
 // unfortunately the .splat file format has no header specifying total number
@@ -156,7 +183,7 @@ class AssetLoader {
                 } else {
                     //resolve(new Splat(asset));
                     const splat = new Splat(asset);
-                    splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 180));   //! changed from 179.3 to 179.2
+                    applyImportRotation(splat, 'asset-loader.loadPly');
                     resolve(splat);
                 }
             });
@@ -195,7 +222,7 @@ class AssetLoader {
                 asset.resource = new GSplatResource(this.app, gsplatData, []);
                 //resolve(new Splat(asset));
                 const splat = new Splat(asset);
-                splat.entity.setLocalRotation(new Quat().setFromEulerAngles(0, 0, 180));    //! changed from 179.3 to 179.2
+                applyImportRotation(splat, 'asset-loader.loadSplat');
                 resolve(splat);
             })
             .catch((err) => {
@@ -442,4 +469,4 @@ class AssetLoader {
     }
 }
 
-export { AssetLoader };
+export { AssetLoader, applyImportRotation, shouldApplyImportRotation, IMPORT_X_ROTATION_DEG };

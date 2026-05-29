@@ -3,6 +3,7 @@ import { Mat4, Vec3 } from 'playcanvas';
 
 
 import { Events } from '../events';
+import { Splat } from '../splat';
 import { BottomToolbar } from './bottom-toolbar';
 import { ColorPanel } from './color-panel';
 import { ImageSettingsDialog } from './image-settings-dialog';
@@ -250,7 +251,7 @@ class EditorUI {
                 loadCurrentFile().then(() => {
                     updateFileCounter();
                     setTimeout(() => {
-                        events.fire('splats.deleteBiggerThan', 0.0001);
+                        events.fire('splats.deleteBiggerThan', 1);
                     }, 1300);
                 });
             } else {
@@ -328,7 +329,7 @@ class EditorUI {
                     nextButton.disabled = folderFiles.length <= 1;
                     updateFileCounter();
                     setTimeout(() => {
-                        events.fire('splats.deleteBiggerThan', 0.0001);
+                        events.fire('splats.deleteBiggerThan', 1);
                     }, 1300);
                 });
                 //nextButton.disabled = folderFiles.length <= 1;
@@ -351,44 +352,44 @@ class EditorUI {
 
 
         async function loadCurrentFile() {
-            // 2. Now import the user-selected file (if any)
             const file = folderFiles[currentFileIndex];
             if (!file) return;
-            const url = URL.createObjectURL(file);
-            await events.invoke('import', url, file.name);
-            URL.revokeObjectURL(url);
-            // 1. Import WhitePlane.splat first
-            const woodSplatPath = '/static/images/WhitePlane.splat'; // Use the correct path!
+
+            events.fire('scene.clear');
+
+            const woodSplatPath = '/static/images/WhitePlane.splat';
             try {
                 const response = await fetch(woodSplatPath);
                 if (!response.ok) throw new Error('Default splat file not found');
                 const blob = await response.blob();
                 const woodFile = new File([blob], 'WhitePlane.splat');
                 const woodUrl = URL.createObjectURL(woodFile);
-                events.invoke('scene.clear');
-                // If events.invoke('import', ...) returns a promise, await it:
                 await events.invoke('import', woodUrl, woodFile.name);
                 URL.revokeObjectURL(woodUrl);
-        
-                // Center after WhitePlane.splat is loadeds
-                //events.fire('centerFit.selectedSplat');
 
-                const splats = await events.invoke('scene.splats');
-                const woodSplat = splats.find(s => s.name === 'WhitePlane.splat');
+                const splatsAfterPlane = await events.invoke('scene.splats') as Splat[];
+                const woodSplat = splatsAfterPlane.find(s => s.name === 'WhitePlane.splat');
                 if (woodSplat) {
                     woodSplat.visible = false;
                 }
-
-                const userSplat = splats.find(s => s.name === file.name);
-                if (userSplat) {
-                    events.fire('selection', userSplat);
-                }
-                                
             } catch (err) {
                 console.warn('Could not load default splat file:', err);
             }
-        
-        
+
+            const url = URL.createObjectURL(file);
+            const userSplat = await events.invoke('import', url, file.name);
+            URL.revokeObjectURL(url);
+
+            if (userSplat) {
+                const euler = new Vec3();
+                userSplat.entity.getLocalRotation().getEulerAngles(euler);
+                console.log('[import-rotation] folder load complete', {
+                    filename: file.name,
+                    eulerDegrees: { x: euler.x, y: euler.y, z: euler.z }
+                });
+                events.fire('selection.changed', userSplat);
+            }
+
             updateFileCounter();
         }
 
@@ -428,7 +429,7 @@ class EditorUI {
                 loadCurrentFile().then(() => {
                     updateFileCounter();
                     setTimeout(() => {
-                        events.fire('splats.deleteBiggerThan', 0.0001);
+                        events.fire('splats.deleteBiggerThan', 1);
                     }, 1300);
                     nextButton.disabled = currentFileIndex >= folderFiles.length - 1;
                 });

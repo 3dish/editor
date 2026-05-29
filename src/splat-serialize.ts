@@ -7,6 +7,7 @@ import {
     Vec3
 } from 'playcanvas';
 
+import { IMPORT_X_ROTATION_DEG, shouldApplyImportRotation } from './asset-loader';
 import { SHRotation } from './sh-utils';
 import { Splat } from './splat';
 import { State } from './splat-state';
@@ -237,8 +238,12 @@ class SplatTransformCache {
 
                 // we must undo the transform we apply at load time to output data
                 if (!keepWorldTransform) {
-                    mat.setFromEulerAngles(0, 0, -180);
-                    mat.mul2(mat, splat.entity.getWorldTransform());
+                    if (shouldApplyImportRotation(splat.filename)) {
+                        mat.setFromEulerAngles(-IMPORT_X_ROTATION_DEG, 0, 0);
+                        mat.mul2(mat, splat.entity.getWorldTransform());
+                    } else {
+                        mat.copy(splat.entity.getWorldTransform());
+                    }
                 }
 
                 // combine with transform palette matrix
