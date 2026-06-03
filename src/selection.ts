@@ -32,7 +32,11 @@ const registerSelectionEvents = (events: Events, scene: Scene) => {
 
     events.on('scene.elementAdded', (element: Element) => {
         if (element.type === ElementType.splat) {
-            setSelection(element as Splat);
+            const splat = element as Splat;
+            // Only auto-select the first splat; later adds (e.g. WhitePlane) must not steal selection.
+            if (!selection && splat.visible) {
+                setSelection(splat);
+            }
         }
     });
 

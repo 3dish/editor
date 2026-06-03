@@ -172,7 +172,7 @@ const initFileHandler = (scene: Scene, events: Events, dropTarget: HTMLElement, 
                     if (stored?.tintClr) {
                         model.tintClr.set(stored.tintClr.r, stored.tintClr.g, stored.tintClr.b);
                     }
-                    events.fire('selection.changed', model);
+                    events.fire('selection', model);
                 } else if (lowerFilename.endsWith('.ply')) {
                     //model._brightness = 0.1;
                     //model._blackPoint = 0.1; 
@@ -187,7 +187,7 @@ const initFileHandler = (scene: Scene, events: Events, dropTarget: HTMLElement, 
                     if (stored?.tintClr) {
                         model.tintClr.set(stored.tintClr.r, stored.tintClr.g, stored.tintClr.b);
                     }
-                    events.fire('selection.changed', model);
+                    events.fire('selection', model);
                 }
 
                 //! Activate small sphere selection tool after file import (for drag & drop)

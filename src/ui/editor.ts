@@ -381,7 +381,7 @@ class EditorUI {
             }
 
             if (userSplat) {
-                events.fire('selection.changed', userSplat);
+                events.fire('selection', userSplat);
             }
 
             updateFileCounter();
