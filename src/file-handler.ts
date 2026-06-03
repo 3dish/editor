@@ -146,14 +146,6 @@ const initFileHandler = (scene: Scene, events: Events, dropTarget: HTMLElement, 
             } else if (lowerFilename.endsWith('.ply') || lowerFilename.endsWith('.splat') || (lowerFilename === 'meta.json')) {
                 const model = await scene.assetLoader.loadModel({ url, filename, animationFrame });
                 scene.add(model);
-                {
-                    const euler = new Vec3();
-                    model.entity.getLocalRotation().getEulerAngles(euler);
-                    console.log('[import-rotation] file-handler.handleImport after add', {
-                        filename: model.filename,
-                        eulerDegrees: { x: euler.x, y: euler.y, z: euler.z }
-                    });
-                }
 
                 // Simple helper to get stored color settings
                 const getStoredColorSettings = () => {

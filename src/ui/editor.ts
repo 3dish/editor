@@ -357,6 +357,10 @@ class EditorUI {
 
             events.fire('scene.clear');
 
+            const url = URL.createObjectURL(file);
+            const userSplat = await events.invoke('import', url, file.name);
+            URL.revokeObjectURL(url);
+
             const woodSplatPath = '/static/images/WhitePlane.splat';
             try {
                 const response = await fetch(woodSplatPath);
@@ -376,17 +380,7 @@ class EditorUI {
                 console.warn('Could not load default splat file:', err);
             }
 
-            const url = URL.createObjectURL(file);
-            const userSplat = await events.invoke('import', url, file.name);
-            URL.revokeObjectURL(url);
-
             if (userSplat) {
-                const euler = new Vec3();
-                userSplat.entity.getLocalRotation().getEulerAngles(euler);
-                console.log('[import-rotation] folder load complete', {
-                    filename: file.name,
-                    eulerDegrees: { x: euler.x, y: euler.y, z: euler.z }
-                });
                 events.fire('selection.changed', userSplat);
             }
 

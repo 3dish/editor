@@ -7,7 +7,7 @@ import {
     Vec3
 } from 'playcanvas';
 
-import { IMPORT_X_ROTATION_DEG, shouldApplyImportRotation } from './asset-loader';
+import { EXPORT_EXTERNAL_X_CORRECTION_DEG, shouldApplyImportRotation } from './asset-loader';
 import { SHRotation } from './sh-utils';
 import { Splat } from './splat';
 import { State } from './splat-state';
@@ -236,11 +236,15 @@ class SplatTransformCache {
             if (!transform.mat) {
                 const mat = new Mat4();
 
-                // we must undo the transform we apply at load time to output data
+                // Bake the in-editor orientation for external viewers (Spark, etc.).
+                // SuperSplat applies IMPORT_X_ROTATION_DEG on the entity; Spark loads the
+                // file as-is, so we add EXPORT_EXTERNAL_X_CORRECTION_DEG to match conventions.
+                // WhitePlane.splat is exported without this correction.
                 if (!keepWorldTransform) {
                     if (shouldApplyImportRotation(splat.filename)) {
-                        mat.setFromEulerAngles(-IMPORT_X_ROTATION_DEG, 0, 0);
-                        mat.mul2(mat, splat.entity.getWorldTransform());
+                        const exportFix = new Mat4().setFromEulerAngles(EXPORT_EXTERNAL_X_CORRECTION_DEG, 0, 0);
+                        exportFix.mul2(exportFix, splat.entity.getWorldTransform());
+                        mat.copy(exportFix);
                     } else {
                         mat.copy(splat.entity.getWorldTransform());
                     }

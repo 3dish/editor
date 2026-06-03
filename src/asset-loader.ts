@@ -10,7 +10,7 @@ import {
     PIXELFORMAT_R16U,
     GSplat
 } from 'playcanvas';
-import { Quat, Vec3 } from 'playcanvas';
+import { Quat } from 'playcanvas';
 
 import { Events } from './events';
 import { Splat } from './splat';
@@ -23,7 +23,11 @@ interface ModelLoadRequest {
     animationFrame?: boolean;       // animations disable morton re-ordering at load time for faster loading
 }
 
-const IMPORT_X_ROTATION_DEG = 270;
+const IMPORT_X_ROTATION_DEG = -90;
+
+// Spark and other external viewers use a different axis convention than SuperSplat's
+// entity rotation. Add this on export so the baked file matches what you see in-editor.
+const EXPORT_EXTERNAL_X_CORRECTION_DEG = 180;
 
 const SKIP_IMPORT_ROTATION_NAMES = new Set([
     'whiteplane.splat'
@@ -34,20 +38,11 @@ const shouldApplyImportRotation = (filename?: string) => {
     return !SKIP_IMPORT_ROTATION_NAMES.has(name);
 };
 
-const applyImportRotation = (splat: Splat, source: string) => {
+const applyImportRotation = (splat: Splat, _source: string) => {
     if (!shouldApplyImportRotation(splat.filename)) {
-        console.log('[import-rotation] skipped', { source, filename: splat.filename });
         return;
     }
     splat.entity.setLocalRotation(new Quat().setFromEulerAngles(IMPORT_X_ROTATION_DEG, 0, 0));
-    const euler = new Vec3();
-    splat.entity.getLocalRotation().getEulerAngles(euler);
-    console.log('[import-rotation] applied', {
-        source,
-        filename: splat.filename,
-        xRotationDeg: IMPORT_X_ROTATION_DEG,
-        eulerDegrees: { x: euler.x, y: euler.y, z: euler.z }
-    });
 };
 
 // ideally this function would stream data directly into GSplatData buffers.
@@ -469,4 +464,10 @@ class AssetLoader {
     }
 }
 
-export { AssetLoader, applyImportRotation, shouldApplyImportRotation, IMPORT_X_ROTATION_DEG };
+export {
+    AssetLoader,
+    applyImportRotation,
+    shouldApplyImportRotation,
+    IMPORT_X_ROTATION_DEG,
+    EXPORT_EXTERNAL_X_CORRECTION_DEG
+};
